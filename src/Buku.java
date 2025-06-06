@@ -46,7 +46,9 @@ public class Buku {
     public void setJudul(String judul) {
         this.judulBuku = judul;
     }
-    public void setJumlah(int jumlah) { this.jumlah = jumlah; }
+    public void setJumlah(int jumlah) {
+        this.jumlah = jumlah;
+    }
     public void setPengarang(TreeSet<String> Pengarang) {
         this.Pengarang = Pengarang;
     }

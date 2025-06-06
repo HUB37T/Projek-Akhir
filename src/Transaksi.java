@@ -6,15 +6,13 @@ public class Transaksi {
     private String nim;
     private String kodeBuku;
     private LocalDate tanggalPinjam = null;
-    private LocalTime jamPinjam = null;
-    private HashMap<String, String> daftarPinjaman;
+    private String namaBuku;
 
-    public Transaksi(String nim, String kodeBuku, LocalDate tanggalPinjam,LocalTime jamPinjam, HashMap<String, String> daftarPinjaman) {
+    public Transaksi(String nim, String kodeBuku, LocalDate tanggalPinjam,String namaBuku ) {
         this.nim = nim;
         this.kodeBuku = kodeBuku;
         this.tanggalPinjam = tanggalPinjam;
-        this.jamPinjam = jamPinjam;
-        this.daftarPinjaman = daftarPinjaman;
+        this.namaBuku = namaBuku;
     }
     public String getNim() {
         return nim;
@@ -25,11 +23,8 @@ public class Transaksi {
     public LocalDate getTanggalPinjam() {
         return tanggalPinjam;
     }
-    public LocalTime getJamPinjam() {
-        return jamPinjam;
-    }
-    public HashMap<String, String> getDaftarPinjaman() {
-        return daftarPinjaman;
+    public String getNamaBuku() {
+        return namaBuku;
     }
 
 }
