@@ -76,6 +76,4 @@ public class Buku {
     public String toString() {
         return kodeBuku + ',' + judulBuku + ',' + getPengarang() + ',' + getJumlah();
     }
-
-
 }
