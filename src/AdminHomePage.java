@@ -258,7 +258,7 @@ public class AdminHomePage extends JFrame{
 
             pengarangSet.clear();
             pengarangKe = 1;
-            // Panggil metode pengumpul nama, sisanya akan ditangani di sana
+
             editNamaPengarang(kode, judul, Integer.parseInt(jumlahBukuText));
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
