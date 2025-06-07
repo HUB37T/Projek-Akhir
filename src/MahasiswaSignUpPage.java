@@ -5,8 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MahasiswaSignUpPage extends JFrame {
-
-    // Deklarasi semua komponen sebagai field
     private OperatorMahasiswa operatorMahasiswa;
     private CustomTextField nimField;
     private CustomTextField nameField;
@@ -36,13 +34,10 @@ public class MahasiswaSignUpPage extends JFrame {
 
     private void initComponents() {
         operatorMahasiswa = new OperatorMahasiswa();
-
-        // Gunakan CustomTextField untuk semua input teks
         nimField = new CustomTextField("nim_icon.png");
         nameField = new CustomTextField("user_icon.png");
-        prodiField = new CustomTextField("prodi_icon.png"); // Ikon buku atau gedung
+        prodiField = new CustomTextField("prodi_icon.png");
 
-        // Gunakan JPasswordField dengan gaya yang konsisten
         passwordField = new JPasswordField();
         stylePasswordField(passwordField);
 
@@ -110,7 +105,6 @@ public class MahasiswaSignUpPage extends JFrame {
     }
 
     private void registerEventListeners() {
-        // Fungsionalitas inti tetap sama, hanya ditambah validasi di depan
         signupButton.addActionListener(e -> {
             String nim = nimField.getText().trim();
             String nama = nameField.getText().trim();
@@ -118,7 +112,6 @@ public class MahasiswaSignUpPage extends JFrame {
             String password = new String(passwordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
 
-            // Validasi sebelum memanggil logika utama
             if (nim.isEmpty() || nama.isEmpty() || prodi.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -128,7 +121,6 @@ public class MahasiswaSignUpPage extends JFrame {
                 return;
             }
 
-            // Jika validasi lolos, jalankan fungsionalitas asli Anda
             try {
                 operatorMahasiswa.daftarMahasiswa(nim, nama, password, prodi);
                 JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -167,7 +159,6 @@ public class MahasiswaSignUpPage extends JFrame {
         pf.setEchoChar('•');
     }
 
-    // (Helper `gbc` disederhanakan dari prompt sebelumnya agar tidak error jika disalin terpisah)
     private GridBagConstraints gbc(int gridx, int gridy) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gridx;
@@ -191,7 +182,7 @@ public class MahasiswaSignUpPage extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Pastikan Anda memiliki kelas CustomTextField dan RoundedButton di proyek
+
         SwingUtilities.invokeLater(MahasiswaSignUpPage::new);
     }
 }
