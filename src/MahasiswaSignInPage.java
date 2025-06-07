@@ -5,6 +5,9 @@ import java.awt.*;
 
 public class MahasiswaSignInPage extends JFrame {
 
+    OperatorMahasiswa operator = new OperatorMahasiswa();
+    JTextField nimField, prodiField, namaField;
+    JPasswordField passwordField;
     public MahasiswaSignInPage() {
         setTitle("Mahasiswa - Sign In");
         setSize(800, 600);
@@ -27,25 +30,35 @@ public class MahasiswaSignInPage extends JFrame {
         title.setForeground(new Color(111, 0, 44));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField nimField = createTextField("NIM");
-        JPasswordField passwordField = createPasswordField("Password");
+        nimField = createTextField("NIM");
+        namaField = createTextField("Nama");
+        passwordField = createPasswordField("Password");
+        prodiField = createTextField("Prodi");
 
         JButton loginBtn = createMaroonButton("Login");
         loginBtn.addActionListener(e -> {
-            // Dummy validasi
-            String nim = nimField.getText();
-            String password = new String(passwordField.getPassword());
-            if (nim.equals("123") && password.equals("abc")) {
-                JOptionPane.showMessageDialog(this, "Login berhasil!");
-                new HalamanAktivitasMahasiswa().setVisible(true);
-                SwingUtilities.invokeLater(() -> {
-                    new HalamanAktivitasMahasiswa().setVisible(true);
-                    this.dispose();});
-                // Navigasi ke halaman aktivitas mahasiswa
+            String nim1 = nimField.getText().trim();
+            String nama1 = namaField.getText().trim();
+            String password1 = new String(passwordField.getPassword());
+            String prodi1 = prodiField.getText().trim();
+
+            if (nim1.isEmpty() || password1.isEmpty() || prodi1.isEmpty() || nama1.isEmpty() ){
+                JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "NIM atau Password salah!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                try {
+                    if(operator.cekMahasiswa(nim1, nama1, password1, prodi1)){
+                        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
+                        dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Mahasiswa belum terdaftar", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
 
         JButton btnBack = new JButton("Back");
         btnBack.setBounds(680, 520, 80, 30); // Atur koordinat agar pojok kanan bawah
@@ -63,7 +76,11 @@ public class MahasiswaSignInPage extends JFrame {
         formPanel.add(Box.createVerticalStrut(30));
         formPanel.add(nimField);
         formPanel.add(Box.createVerticalStrut(20));
+        formPanel.add(namaField);
+        formPanel.add(Box.createVerticalStrut(20));
         formPanel.add(passwordField);
+        formPanel.add(Box.createVerticalStrut(20));
+        formPanel.add(prodiField);
         formPanel.add(Box.createVerticalStrut(30));
         formPanel.add(loginBtn);
         // formPanel.add(backBtn);

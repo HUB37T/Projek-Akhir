@@ -4,9 +4,15 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.*;
+import java.time.LocalDate;
 // import java.awt.event.*;
 
 public class HalamanAktivitasMahasiswa extends JFrame {
+    Perpustakaan perpustakaan = new Perpustakaan();
+    private String nim = OperatorMahasiswa.nimLog;
+    private String nama = OperatorMahasiswa.namaLog;
+    private JTextField cariField;
 
     private DefaultTableModel tabelModel;
 
@@ -34,7 +40,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setOpaque(false);
 
-        JTextField cariField = new JTextField(20);
+        cariField = new JTextField(20);
         JButton cariBtn = new JButton("Cari");
         JButton listBtn = new JButton("List Buku");
         JButton pinjamBtn = new JButton("Pinjam");
@@ -53,19 +59,27 @@ public class HalamanAktivitasMahasiswa extends JFrame {
 
         // Dummy interaksi tombol
         cariBtn.addActionListener(e -> {
-            String kode = cariField.getText();
+            String hasil = null;
+            try {
+                hasil = perpustakaan.cariBuku(cariField.getText());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, ex);
+            }
+            String[] tes = hasil.split(";");
             // Simulasi data
-            if (kode.equalsIgnoreCase("B001")) {
-                JOptionPane.showMessageDialog(panel, "Buku ditemukan:\nKode: B001\nJudul: Algoritma", "Info", JOptionPane.INFORMATION_MESSAGE);
+            if (hasil != null) {
+                JOptionPane.showMessageDialog(panel, "Buku ditemukan!\nKode: " + tes[0] + "\nJudul: "+tes[1]+"\nPengarang: "+tes[2]+"\nJumlah: "+tes[3], "Info", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(panel, "Stok buku habis atau tidak ditemukan.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(panel, "Buku tidak ditemukan.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             }
         });
 
         pinjamBtn.addActionListener(e -> {
-            // Simulasi peminjaman sukses
-            tabelModel.addRow(new String[]{"123456", "B001", "Algoritma", "2025-06-06"});
-            JOptionPane.showMessageDialog(panel, "Buku berhasil dipinjam!");
+            try {
+                pinjam();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         listBtn.addActionListener(e -> {
@@ -74,6 +88,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(tableScroll, BorderLayout.CENTER);
+        tampilkanTabelPinjam();
         return panel;
     }
 
@@ -87,33 +102,17 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         topPanel.setOpaque(false);
 
         JTextField cariField = new JTextField(20);
-        JButton cariBtn = new JButton("Cari");
+
         JButton listBtn = new JButton("List Buku Dipinjam");
         JButton kembalikanBtn = new JButton("Kembalikan");
 
         topPanel.add(new JLabel("Kode Buku:"));
         topPanel.add(cariField);
-        topPanel.add(cariBtn);
         topPanel.add(kembalikanBtn);
         topPanel.add(listBtn);
 
         JTable table = styledTable(tabelModel);
         JScrollPane tableScroll = new JScrollPane(table);
-
-        cariBtn.addActionListener(e -> {
-            String kode = cariField.getText();
-            boolean ditemukan = false;
-            for (int i = 0; i < tabelModel.getRowCount(); i++) {
-                if (tabelModel.getValueAt(i, 1).equals(kode)) {
-                    ditemukan = true;
-                    JOptionPane.showMessageDialog(panel, "Transaksi ditemukan untuk kode " + kode);
-                    break;
-                }
-            }
-            if (!ditemukan) {
-                JOptionPane.showMessageDialog(panel, "Buku tidak dipinjam oleh Anda.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            }
-        });
 
         kembalikanBtn.addActionListener(e -> {
             String kode = cariField.getText();
@@ -191,9 +190,56 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return table;
     }
 
+    private void pinjam() {
+        String kodeBuku = cariField.getText().trim();
+        if (kodeBuku.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Silakan masukkan kode buku.", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            String dataBuku = perpustakaan.cariBuku(kodeBuku);
+            if (dataBuku == null) {
+                throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
+            }
+            String judulBuku = dataBuku.split(";")[1];
+
+            perpustakaan.kurangiStokBuku(kodeBuku);
+
+            perpustakaan.pinjamBuku(nim, kodeBuku, judulBuku, LocalDate.now());
+
+            JOptionPane.showMessageDialog(this, "Buku '" + judulBuku + "' berhasil dipinjam!");
+            tampilkanTabelPinjam();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal meminjam buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void tampilkanTabelPinjam(){
+        tabelModel.setRowCount(0);
+        try{
+            File file = new File("dataPinjam.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                String nim = parts[0].trim();
+                String kode = parts[1].trim();
+                String judul = parts[2].trim();
+                String tanggal = parts[3].trim();
+                tabelModel.addRow(new Object[]{nim,kode, judul,tanggal});
+            }
+            br.close();
+            fr.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
     }
 }
-

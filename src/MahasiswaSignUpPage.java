@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MahasiswaSignUpPage extends JFrame {
-
+    OperatorMahasiswa operatorMahasiswa = new OperatorMahasiswa();
     public MahasiswaSignUpPage() {
         setTitle("Mahasiswa - Sign Up");
         setSize(800, 600);
@@ -34,12 +34,23 @@ public class MahasiswaSignUpPage extends JFrame {
 
         JButton daftarBtn = createMaroonButton("Daftar");
         daftarBtn.addActionListener(e -> {
-            // Simulasi tindakan saat mendaftar
-            JOptionPane.showMessageDialog(this, "Pendaftaran berhasil! Menuju halaman aktivitas mahasiswa.");
-            SwingUtilities.invokeLater(() -> {
-                    new HalamanAktivitasMahasiswa().setVisible(true);
-                    this.dispose();});
-            // Navigasi ke halaman aktivitas mahasiswa
+            String nim1 = nimField.getText().trim();
+            String nama1 = namaField.getText().trim();
+            String password1 = new String(passwordField.getPassword());
+            String prodi1 = prodiField.getText().trim();
+
+            if (nim1.isEmpty() || nama1.isEmpty() || password1.isEmpty() || prodi1.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            } else {
+                try {
+                    operatorMahasiswa.daftarMahasiswa(nim1, nama1, password1, prodi1);
+                    SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
+                    JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
+            }
         });
 
         JButton btnBack = new JButton("Back");
@@ -97,7 +108,7 @@ public class MahasiswaSignUpPage extends JFrame {
         return button;
     }
 
-    // public static void main(String[] args) {
-    //     SwingUtilities.invokeLater(() -> new MahasiswaSignUpPage().setVisible(true));
-    // }
+     public static void main(String[] args) {
+         SwingUtilities.invokeLater(() -> new MahasiswaSignUpPage().setVisible(true));
+     }
 }

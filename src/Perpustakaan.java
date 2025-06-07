@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -12,54 +13,43 @@ public class Perpustakaan {
     ArrayList<Buku> listBuku;
     ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
-    File file = new File("dataBuku.txt");
+
+    private final Path fileBuku = Paths.get("dataBuku.txt");
+    private final Path filePinjam = Paths.get("dataPinjam.txt");
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
         listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
-
     //Method untuk Tab Buku
     public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
         listBuku.add(new Buku(kode, judul, pengarang, i));
     }
 
-    public String cariBuku(String kode){
-        try{
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+    public String cariBuku(String kode) throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(fileBuku)) {
             String line;
-            while((line = br.readLine()) != null){
-                String[] parts = line.split(";");
-                if(parts[0].equals(kode)){
-                    return parts[0] + ";"+ parts[1]+ ";"+ parts[2]+";"+parts[3];
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";", -1);
+                if (parts.length > 0 && parts[0].equals(kode)) {
+                    return line;
                 }
             }
-            br.close();
-            fr.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return null;
     }
 
 
     public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
-
-        Path inputFile = Paths.get("dataBuku.txt");
         Path tempFile = Paths.get("bukuTemp.txt");
+        boolean bukuDitemukan = false;
 
-        try (BufferedReader reader = Files.newBufferedReader(inputFile);
-            BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
+        try (BufferedReader reader = Files.newBufferedReader(fileBuku);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
             String currentLine;
-            boolean bukuDitemukan = false;
-
             while ((currentLine = reader.readLine()) != null) {
                 String[] parts = currentLine.split(";", -1);
-
                 if (parts.length > 0 && parts[0].equals(kode)) {
                     String pengarangGabung = String.join(",", pengarang);
                     writer.write(kode + ";" + judul + ";" + pengarangGabung + ";" + jumlah);
@@ -69,54 +59,74 @@ public class Perpustakaan {
                 }
                 writer.newLine();
             }
-            reader.close();
-            writer.close();
-
-            if (!bukuDitemukan) {
-                throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
-            }
-        } catch (IOException e) {
-            throw new Exception("Terjadi kesalahan saat membaca/menulis file: " + e.getMessage());
         }
 
-        try {
-            Files.move(tempFile, inputFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new Exception("Gagal menyimpan perubahan ke file utama: " + e.getMessage());
-        }
+        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+
+        Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public void hapusBuku(String kode) throws Exception{
-        File inputFile = new File("dataBuku.txt");
-        File tempFile = new File("bukuTemp.txt");
+    public void hapusBuku(String kode) throws Exception {
+        Path tempFile = Paths.get("bukuTemp.txt");
+        boolean bukuDitemukan = false;
 
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
-        ) {
+        try (BufferedReader reader = Files.newBufferedReader(fileBuku);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
             String currentLine;
-
             while ((currentLine = reader.readLine()) != null) {
-
-                String[] parts = currentLine.split(";");
+                String[] parts = currentLine.split(";", -1);
                 if (parts.length > 0 && parts[0].equals(kode)) {
+                    bukuDitemukan = true;
                     continue;
                 }
                 writer.write(currentLine);
                 writer.newLine();
             }
-            reader.close();
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        if (inputFile.delete()) {
-            tempFile.renameTo(inputFile);
-        } else {
-            throw new Exception("Buku gagal dihapus!");
+        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+
+        Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void kurangiStokBuku(String kodeBuku) throws Exception {
+        Path tempFile = Paths.get("bukuTemp.txt");
+        boolean bukuDitemukan = false;
+
+        try (BufferedReader reader = Files.newBufferedReader(fileBuku);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+                String[] parts = currentLine.split(";", -1);
+                if (parts.length > 3 && parts[0].equals(kodeBuku)) {
+                    bukuDitemukan = true;
+                    int stokLama = Integer.parseInt(parts[3]);
+                    if (stokLama > 0) {
+                        writer.write(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + (stokLama - 1));
+                    } else {
+                        throw new Exception("Stok buku '" + parts[1] + "' sudah habis.");
+                    }
+                } else {
+                    writer.write(currentLine);
+                }
+                writer.newLine();
+            }
+        }
+
+        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
+
+        Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void pinjamBuku(String nim, String kodeBuku, String judul, LocalDate tanggal) throws Exception {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePinjam.toString(), true))) {
+            bw.write(nim + ";" + kodeBuku + ";" + judul + ";" + tanggal.toString());
+            bw.newLine();
+        } catch (IOException e) {
+            throw new Exception("Gagal mencatat data peminjaman: " + e.getMessage(), e);
         }
     }
+
     //Sampai Sini
 
     //Method untuk Tab Mahasiswa

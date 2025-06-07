@@ -1,19 +1,30 @@
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 public class AdminHomePage extends JFrame{
     Perpustakaan perpustakaan = new Perpustakaan();
     private JTable tableBuku;
     private JTable tableTransaksi;
     private DefaultTableModel modelBuku;
     private DefaultTableModel modelTransaksi;
-    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah;
+    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari;
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlah;
     private int pengarangKe = 0;
+    private TableRowSorter<TableModel> sorterTransaksi;
     public AdminHomePage() {
         setTitle("Halaman Utama Admin");
         setSize(800, 600);
@@ -75,51 +86,96 @@ public class AdminHomePage extends JFrame{
         // Tab 2: Transaksi Mahasiswa
         JPanel panelTransaksi = new JPanel(new BorderLayout());
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField tfCari = new JTextField(20);
+        tfCari = new JTextField(20);
         JButton btnCari = new JButton("Cari");
         JButton btnSort = new JButton("Sort by Day");
+        JButton refreshButton = new JButton("Refresh");
+
         topPanel.add(new JLabel("Cari:"));
         topPanel.add(tfCari);
         topPanel.add(btnCari);
         topPanel.add(btnSort);
+        topPanel.add(refreshButton);
 
-        modelTransaksi = new DefaultTableModel(new Object[]{"NIM", "Kode Buku", "Tanggal Pinjam", "Jam Pinjam"}, 0);
+        String[] columnNames = {"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"};
+        modelTransaksi = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 3) {
+                    return LocalDate.class;
+                }
+                return Object.class;
+            }
+        };
         tableTransaksi = new JTable(modelTransaksi);
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(modelTransaksi);
+        tableTransaksi.setRowSorter(sorter);
 
         panelTransaksi.add(topPanel, BorderLayout.NORTH);
         panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
 
-        btnAdd.addActionListener(e -> addBuku());
-
+        btnAdd.addActionListener(e -> {
+            try {
+                addBuku();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         btnEdit.addActionListener(e -> {
             try {
                 editBuku();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage());
+                throw new RuntimeException(ex);
             }
         });
-
         btnSearch.addActionListener(e -> {
             try {
                 cariBuku();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage());
+                throw new RuntimeException(ex);
             }
         });
         btnDelete.addActionListener(e -> hapusBuku());
         refresh.addActionListener(e -> tampilkanTabelBuku());
+        refreshButton.addActionListener(e -> tampilkanTabelPinjam());
+        sorterTransaksi = new TableRowSorter<>(modelTransaksi);
+        tableTransaksi.setRowSorter(sorterTransaksi);
+        btnCari.addActionListener(e -> {
+            String teksPencarian = tfCari.getText().trim();
+
+            if (teksPencarian.length() == 0) {
+                sorterTransaksi.setRowFilter(null);
+            } else {
+                sorterTransaksi.setRowFilter(RowFilter.regexFilter("(?i)" + teksPencarian, 0));
+            }
+        });
+
+        btnSort.addActionListener(e -> {
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+            sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
+            sorter.setSortKeys(sortKeys);
+        });
 
 
         // Tambahkan ke tabbedPane
         tabbedPane.addTab("Manajemen Buku", panelBuku);
         tabbedPane.addTab("Transaksi Mahasiswa", panelTransaksi);
 
-        start();
-
         add(tabbedPane);
+        tampilkanTabelBuku();
+        tampilkanTabelPinjam();
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowActivated(WindowEvent e) {
+                tampilkanTabelBuku();
+                tampilkanTabelPinjam();
+            }
+        });
+
         setVisible(true);
     }
-    private void addBuku(){
+    private void addBuku() throws IOException {
         String Kode = tfKode.getText();
         String Judul = tfJudul.getText();
         String jumlahPengarang = tfPengarang.getText().trim();
@@ -128,70 +184,61 @@ public class AdminHomePage extends JFrame{
             JOptionPane.showMessageDialog(this, "Kode buku tidak boleh sama!");
             return;
         }
-        if (Kode.isEmpty() || Judul.isEmpty() || jumlahPengarang.isEmpty() || Jumlah.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
         try {
+            if (perpustakaan.cariBuku(Kode) != null) {
+                JOptionPane.showMessageDialog(this, "Kode buku sudah ada!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             jumlah = Integer.parseInt(jumlahPengarang);
             if (jumlah <= 0) throw new NumberFormatException();
 
             pengarangSet.clear();
             pengarangKe = 1;
-            inputNamaPengarang(Kode, Judul);
+            inputNamaPengarang(Kode, Judul, Integer.parseInt(Jumlah));
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        try {
-            perpustakaan.simpanBuku(Kode, Judul, pengarangSet, Integer.parseInt(Jumlah));
-            tampilkanTabelBuku();
-            return;
-        }catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Jumlah pengarang dan jumlah buku harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memeriksa buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void inputNamaPengarang(String kode, String judul) {
+    public void inputNamaPengarang(String kode, String judul, int jumlahBuku) {
         if (pengarangKe > jumlah) {
-            JOptionPane.showMessageDialog(null, "Buku berhasil disimpan!");
+            try {
+                perpustakaan.simpanBuku(kode, judul, pengarangSet, jumlahBuku);
+                JOptionPane.showMessageDialog(null, "Buku berhasil disimpan!");
+                tampilkanTabelBuku(); // Refresh tabel
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Gagal menyimpan buku ke file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
             return;
         }
 
         String nama = JOptionPane.showInputDialog(null, "Masukkan nama pengarang ke-" + pengarangKe + ":");
-        if (nama != null && !nama.isBlank()) {
+        if (nama != null && !nama.trim().isEmpty()) {
             pengarangSet.add(nama.trim());
             pengarangKe++;
-            inputNamaPengarang(kode, judul);
-        } else {
+            inputNamaPengarang(kode, judul, jumlahBuku);
+        } else if (nama != null) {
             JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.");
-            inputNamaPengarang(kode, judul);
+            inputNamaPengarang(kode, judul, jumlahBuku);
         }
     }
-    public void tampilkanTabelBuku(){
+    public void tampilkanTabelBuku() {
         modelBuku.setRowCount(0);
-        try{
-            File file = new File("dataBuku.txt");
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataBuku.txt"))) {
             String line;
-            while((line = br.readLine()) != null){
-                String[] parts = line.split(";");
-                String kode = parts[0].trim();
-                String judul = parts[1].trim();
-                String pengarang = parts[2].trim();
-                String jumlah = parts[3].trim();
-                modelBuku.addRow(new Object[]{kode,judul, pengarang,jumlah});
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";", -1);
+                modelBuku.addRow(parts);
             }
-            br.close();
-            fr.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                Files.createFile(Paths.get("dataBuku.txt"));
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Gagal membaca file dataBuku.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-    }
-    public void start(){
-        tampilkanTabelBuku();
     }
 
     private void editBuku() throws Exception {
@@ -266,6 +313,36 @@ public class AdminHomePage extends JFrame{
             tampilkanTabelBuku();
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void tampilkanTabelPinjam() {
+        if (sorterTransaksi != null) {
+            sorterTransaksi.setRowFilter(null);
+        }
+
+
+        if (tfCari != null) {
+            tfCari.setText("");
+        }
+        modelTransaksi.setRowCount(0);
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataPinjam.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";", -1);
+                if (parts.length > 3) {
+                    String nim = parts[0];
+                    String kode = parts[1];
+                    String judul = parts[2];
+                    LocalDate tanggal = LocalDate.parse(parts[3]);
+                    modelTransaksi.addRow(new Object[]{nim, kode, judul, tanggal});
+                }
+            }
+        } catch (IOException e) {
+            try {
+                Files.createFile(Paths.get("dataPinjam.txt"));
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Gagal membaca file dataPinjam.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
