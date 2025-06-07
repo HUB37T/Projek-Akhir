@@ -53,7 +53,7 @@ public class Perpustakaan {
         Path tempFile = Paths.get("bukuTemp.txt");
 
         try (BufferedReader reader = Files.newBufferedReader(inputFile);
-             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
+            BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
             String currentLine;
             boolean bukuDitemukan = false;
 
