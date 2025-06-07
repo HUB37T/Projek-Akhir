@@ -1,7 +1,11 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -9,58 +13,88 @@ import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 public class HalamanAktivitasMahasiswa extends JFrame {
-    Perpustakaan perpustakaan = new Perpustakaan();
-    private String nim = OperatorMahasiswa.nimLog; 
+    private Perpustakaan perpustakaan = new Perpustakaan();
+    private String nim = OperatorMahasiswa.nimLog;
     private String nama = OperatorMahasiswa.namaLog;
 
     private JTextField cariFieldPinjam;
     private JTextField cariFieldKembali;
-
     private DefaultTableModel tabelModelPinjam;
     private DefaultTableModel tabelModelKembali;
     private JTable tabelKembali;
+    private JTable tabelPinjam;
 
     public HalamanAktivitasMahasiswa() {
-        setTitle("Aktivitas Mahasiswa - " + nama + " (" + nim + ")");
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        initFrame();
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = createStyledTabbedPane();
 
         tabbedPane.addTab("Pinjam Buku", createPinjamBukuTab());
         tabbedPane.addTab("Pengembalian Buku", createPengembalianBukuTab());
         tabbedPane.addTab("Manajemen Akun", createManajemenAkunTab());
 
         add(tabbedPane);
-        
+
         tampilkanTabelSemuaPinjaman();
         tampilkanTabelPinjamanMahasiswa();
+
+        setVisible(true);
     }
 
-    // ------------------ TAB PINJAM ------------------
+    private void initFrame() {
+        setTitle("Aktivitas Mahasiswa - " + nama + " (" + nim + ")");
+        setSize(950, 700);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        getContentPane().setBackground(new Color(0x3B1A12));
+    }
+
+    private JTabbedPane createStyledTabbedPane() {
+        UIManager.put("TabbedPane.selected", new Color(0x5a382b));
+        UIManager.put("TabbedPane.contentAreaColor", new Color(0x5a382b));
+        UIManager.put("TabbedPane.background", new Color(0x3B1A12));
+        UIManager.put("TabbedPane.foreground", Color.WHITE);
+        UIManager.put("TabbedPane.darkShadow", Color.BLACK);
+        UIManager.put("TabbedPane.light", Color.GRAY);
+        UIManager.put("TabbedPane.focus", new Color(0xDAA520));
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Lato", Font.BOLD, 14));
+        return tabbedPane;
+    }
+
+    // --- TAB 1: PINJAM BUKU ---
     private JPanel createPinjamBukuTab() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(0x3B1A12));
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setOpaque(false);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setOpaque(false);
+        topPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)), "Aksi Peminjaman",
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new Font("Lato", Font.BOLD, 16), new Color(0xDAA520)));
 
-        cariFieldPinjam = new JTextField(20);
-        JButton cariBtn = new JButton("Cari");
-        JButton listBtn = new JButton("List Buku Tersedia");
-        JButton pinjamBtn = new JButton("Pinjam");
+        cariFieldPinjam = createStyledTextField();
+        cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
+        JButton cariBtn = createStyledButton("Cari Buku", "search_icon.png");
+        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "borrow_icon.png");
+        JButton listBtn = createStyledButton("List Buku Tersedia", "list_icon.png");
 
-        topPanel.add(new JLabel("Kode Buku:"));
+        topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldPinjam);
         topPanel.add(cariBtn);
         topPanel.add(pinjamBtn);
         topPanel.add(listBtn);
 
-        tabelModelPinjam = new DefaultTableModel();
-        tabelModelPinjam.setColumnIdentifiers(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"});
-        JTable table = styledTable(tabelModelPinjam);
-        JScrollPane tableScroll = new JScrollPane(table);
+        // Tabel semua pinjaman
+        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        tabelPinjam = new JTable(tabelModelPinjam);
+        styleTable(tabelPinjam);
+        JScrollPane tableScroll = new JScrollPane(tabelPinjam);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
 
         cariBtn.addActionListener(e -> {
             String kodeCari = cariFieldPinjam.getText();
@@ -80,9 +114,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 JOptionPane.showMessageDialog(panel, "Gagal mencari buku: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         pinjamBtn.addActionListener(e -> pinjam());
-
         listBtn.addActionListener(e -> {
             StringBuilder daftarBuku = new StringBuilder("=== Daftar Buku Tersedia ===\n\n");
             File file = new File("dataBuku.txt");
@@ -104,7 +136,11 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 return;
             }
             if (adaBuku) {
-                JOptionPane.showMessageDialog(panel, daftarBuku.toString(), "List Buku Tersedia", JOptionPane.INFORMATION_MESSAGE);
+                JTextArea textArea = new JTextArea(daftarBuku.toString());
+                textArea.setEditable(false);
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+                JOptionPane.showMessageDialog(panel, scrollPane, "List Buku Tersedia", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(panel, "Saat ini tidak ada buku yang tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -115,32 +151,44 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return panel;
     }
 
-    // ------------------ TAB PENGEMBALIAN (DENGAN PERUBAHAN BESAR) ------------------
+    // --- TAB 2: PENGEMBALIAN BUKU ---
     private JPanel createPengembalianBukuTab() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(0x3B1A12));
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setOpaque(false);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setOpaque(false);
-        cariFieldKembali = new JTextField(20);
-        JButton kembalikanBtn = new JButton("Kembalikan");
-        JButton listBtn = new JButton("List Buku Dipinjam");
-        topPanel.add(new JLabel("Kode Buku:"));
+        topPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)), "Aksi Pengembalian",
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new Font("Lato", Font.BOLD, 16), new Color(0xDAA520)));
+
+        cariFieldKembali = createStyledTextField();
+        cariFieldKembali.setPreferredSize(new Dimension(200, 35));
+        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "return_icon.png");
+        JButton listBtn = createStyledButton("List Buku Dipinjam", "list_icon.png");
+
+        topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
         topPanel.add(kembalikanBtn);
         topPanel.add(listBtn);
-        tabelModelKembali = new DefaultTableModel();
-        tabelModelKembali.setColumnIdentifiers(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"});
-        tabelKembali = styledTable(tabelModelKembali);
+
+        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        tabelKembali = new JTable(tabelModelKembali);
+        styleTable(tabelKembali);
         JScrollPane tableScroll = new JScrollPane(tabelKembali);
-        tabelKembali.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
+        tabelKembali.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 int row = tabelKembali.rowAtPoint(evt.getPoint());
                 if (row >= 0) {
                     cariFieldKembali.setText(tabelKembali.getValueAt(row, 0).toString());
                 }
             }
         });
-
         kembalikanBtn.addActionListener(e -> {
             String kodeBuku = cariFieldKembali.getText().trim();
             if (kodeBuku.isEmpty()) {
@@ -153,12 +201,10 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                     JOptionPane.showMessageDialog(panel, "Anda tidak sedang meminjam buku dengan kode " + kodeBuku + ".", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
                 String[] parts = recordPinjaman.split(";");
                 LocalDate tanggalPinjam = LocalDate.parse(parts[3]);
                 LocalDate tanggalKembali = LocalDate.now();
                 long durasiPinjam = ChronoUnit.DAYS.between(tanggalPinjam, tanggalKembali);
-
                 if (durasiPinjam <= 7) {
                     String pesan = String.format("Pengembalian Tepat Waktu!\n\nDurasi Peminjaman: %d hari.\n\nLanjutkan proses pengembalian?", durasiPinjam);
                     int konfirmasi = JOptionPane.showConfirmDialog(panel, pesan, "Konfirmasi Pengembalian", JOptionPane.YES_NO_OPTION);
@@ -170,13 +216,10 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                     long denda = hariTerlambat * 1000;
                     NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
                     String pesan = String.format("Anda Terlambat Mengembalikan Buku!\n\nTotal Denda: %s", formatRupiah.format(denda));
-                    
-                    // Gunakan showOptionDialog untuk tombol custom
                     String[] options = {"Lanjutkan Pembayaran", "Batal"};
                     int pilihan = JOptionPane.showOptionDialog(panel, pesan, "Pemberitahuan Denda",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-
-                    if (pilihan == 0) { // Jika user memilih "Lanjutkan Pembayaran"
+                    if (pilihan == 0) {
                         showPaymentDialog(kodeBuku);
                     }
                 }
@@ -184,7 +227,6 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 JOptionPane.showMessageDialog(panel, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         listBtn.addActionListener(e -> {
             StringBuilder daftarPinjaman = new StringBuilder("=== Buku yang Anda Pinjam ===\n\n");
             File file = new File("dataPinjam.txt");
@@ -203,7 +245,11 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 return;
             }
             if (adaPinjaman) {
-                JOptionPane.showMessageDialog(panel, daftarPinjaman.toString(), "List Buku Dipinjam", JOptionPane.INFORMATION_MESSAGE);
+                JTextArea textArea = new JTextArea(daftarPinjaman.toString());
+                textArea.setEditable(false);
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+                JOptionPane.showMessageDialog(panel, scrollPane, "List Buku Dipinjam", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(panel, "Anda tidak sedang meminjam buku apapun.", "Info", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -214,32 +260,47 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return panel;
     }
 
-    // ------------------ TAB MANAJEMEN AKUN ------------------
+    // --- TAB 3: MANAJEMEN AKUN ---
     private JPanel createManajemenAkunTab() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(0x3B1A12));
+        panel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 15, 15, 15);
 
-        JButton editBtn = new JButton("Edit Akun");
-        JButton hapusBtn = new JButton("Hapus Akun");
-
-        editBtn.setPreferredSize(new Dimension(200, 40));
-        hapusBtn.setPreferredSize(new Dimension(200, 40));
-
-        editBtn.setBackground(new Color(111, 0, 44));
-        hapusBtn.setBackground(new Color(111, 0, 44));
-        editBtn.setForeground(Color.WHITE);
-        hapusBtn.setForeground(Color.WHITE);
-        
+        JLabel titleLabel = new JLabel("Pengaturan Akun", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Lato", Font.BOLD, 32));
+        titleLabel.setForeground(Color.WHITE);
         gbc.gridy = 0;
-        panel.add(editBtn, gbc);
+        gbc.gridwidth = 2;
+        panel.add(titleLabel, gbc);
+
+        JButton editBtn = createStyledButton("Edit Akun", "edit_user_icon.png");
+        editBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
-        gbc.insets = new Insets(20, 0, 0, 0); // Jarak atas
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(editBtn, gbc);
+
+        JLabel editDesc = new JLabel("<html>Perbarui nama, password, atau prodi Anda.</html>");
+        editDesc.setForeground(Color.LIGHT_GRAY);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(editDesc, gbc);
+
+        JButton hapusBtn = createStyledButton("Hapus Akun", "delete_user_icon.png");
+        hapusBtn.setBackground(new Color(139, 0, 0));
+        hapusBtn.setPreferredSize(new Dimension(250, 50));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
         panel.add(hapusBtn, gbc);
 
-        // ========================================================
-        // ==          ACTION LISTENER UNTUK EDIT AKUN           ==
-        // ========================================================
+        JLabel hapusDesc = new JLabel("<html>Hapus akun Anda secara permanen dari sistem.</html>");
+        hapusDesc.setForeground(Color.LIGHT_GRAY);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(hapusDesc, gbc);
+
         editBtn.addActionListener(e -> {
             try {
                 String[] data = new OperatorMahasiswa().getMahasiswaData(nim);
@@ -247,38 +308,28 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                     JOptionPane.showMessageDialog(panel, "Gagal memuat data akun.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                // Buat panel custom untuk dialog input
                 JPanel editPanel = new JPanel(new GridLayout(0, 1, 5, 5));
                 JTextField namaField = new JTextField(data[1]);
                 JPasswordField passField = new JPasswordField(data[2]);
                 JTextField prodiField = new JTextField(data[3]);
-                
                 editPanel.add(new JLabel("Nama:"));
                 editPanel.add(namaField);
                 editPanel.add(new JLabel("Password Baru:"));
                 editPanel.add(passField);
                 editPanel.add(new JLabel("Prodi:"));
                 editPanel.add(prodiField);
-                
                 int result = JOptionPane.showConfirmDialog(panel, editPanel, "Edit Data Akun",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
                 if (result == JOptionPane.OK_OPTION) {
                     String newNama = namaField.getText().trim();
                     String newPass = new String(passField.getPassword()).trim();
                     String newProdi = prodiField.getText().trim();
-
                     if (newNama.isEmpty() || newPass.isEmpty() || newProdi.isEmpty()) {
                         JOptionPane.showMessageDialog(panel, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                    
                     new OperatorMahasiswa().editMahasiswa(nim, newNama, newPass, newProdi);
-                    
                     JOptionPane.showMessageDialog(panel, "Akun berhasil diperbarui. Silakan login kembali.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    // Navigasi ke halaman login
                     new MahasiswaSignInPage().setVisible(true);
                     dispose();
                 }
@@ -286,28 +337,18 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 JOptionPane.showMessageDialog(panel, "Error saat mengakses data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        // =========================================================
-        // ==          ACTION LISTENER UNTUK HAPUS AKUN           ==
-        // =========================================================
         hapusBtn.addActionListener(e -> {
             try {
-                // Cek dulu apakah mahasiswa masih punya pinjaman
                 if (checkHasBorrowedBooks(nim)) {
                     JOptionPane.showMessageDialog(panel, "Tidak dapat menghapus akun.\nAnda masih memiliki buku yang belum dikembalikan.", "Aksi Ditolak", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
                 int confirm = JOptionPane.showConfirmDialog(panel,
                         "Apakah Anda yakin ingin menghapus akun ini secara permanen?\nSemua data Anda akan hilang.",
                         "Konfirmasi Hapus Akun", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                
                 if (confirm == JOptionPane.YES_OPTION) {
                     new OperatorMahasiswa().hapusMahasiswa(nim);
-                    
                     JOptionPane.showMessageDialog(panel, "Akun Anda telah berhasil dihapus.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    // Navigasi ke halaman utama mahasiswa
                     new MahasiswaPage().setVisible(true);
                     dispose();
                 }
@@ -319,78 +360,76 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return panel;
     }
 
-    private boolean checkHasBorrowedBooks(String nim) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(nim + ";")) {
-                    return true; // Ditemukan record pinjaman untuk NIM ini
-                }
-            }
-        } catch (FileNotFoundException e) {
-            return false; // Jika file tidak ada, berarti tidak ada pinjaman
-        }
-        return false;
+    // --- Helper Methods untuk Styling ---
+    private void styleTable(JTable table) {
+        table.setBackground(new Color(0x4a2c2a));
+        table.setForeground(Color.WHITE);
+        table.setGridColor(new Color(0xDAA520));
+        table.setRowHeight(25);
+        table.setFont(new Font("Lato", Font.PLAIN, 14));
+        table.setSelectionBackground(new Color(0xDAA520));
+        table.setSelectionForeground(Color.BLACK);
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(0xDAA520));
+        header.setForeground(Color.BLACK);
+        header.setFont(new Font("Lato", Font.BOLD, 16));
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
     }
-
-    // =========================================================================
-    // ==          METHOD BARU UNTUK MENAMPILKAN DIALOG PEMBAYARAN          ==
-    // =========================================================================
-    private void showPaymentDialog(String kodeBuku) {
-        // Buat JDialog baru yang modal
-        JDialog paymentDialog = new JDialog(this, "Pembayaran Denda via QRIS", true);
-        paymentDialog.setSize(400, 500);
-        paymentDialog.setLayout(new BorderLayout(10, 10));
-
-        // Coba load gambar QR
-        ImageIcon qrIcon = new ImageIcon("qris.jpg"); // PASTIKAN FILE INI ADA
-        JLabel qrLabel;
-
-        // Cek apakah gambar berhasil di-load
-        if (qrIcon.getImageLoadStatus() == MediaTracker.ERRORED || !new File("qris.jpg").exists()) {
-            qrLabel = new JLabel("Gagal memuat gambar qris.jpg", SwingConstants.CENTER);
-            qrLabel.setForeground(Color.RED);
-        } else {
-            // Resize gambar agar pas di dialog
-            Image image = qrIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
-            qrLabel = new JLabel(new ImageIcon(image));
-        }
-
-        JButton payButton = new JButton("Saya Sudah Bayar");
-        payButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
-        payButton.addActionListener(e -> {
-            // Setelah tombol ini diklik, baru proses pengembalian dijalankan
-            prosesPengembalianBuku(kodeBuku);
-            paymentDialog.dispose(); // Tutup dialog pembayaran
-        });
-
-        // Panel untuk menampung tombol agar ada margin
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
-        bottomPanel.add(payButton);
-        
-        paymentDialog.add(qrLabel, BorderLayout.CENTER);
-        paymentDialog.add(bottomPanel, BorderLayout.SOUTH);
-        paymentDialog.setLocationRelativeTo(this); // Muncul di tengah frame utama
-        paymentDialog.setVisible(true);
+    private JTextField createStyledTextField() {
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Lato", Font.PLAIN, 14));
+        textField.setBackground(new Color(0x5a382b));
+        textField.setForeground(Color.WHITE);
+        textField.setCaretColor(Color.WHITE);
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)),
+                new EmptyBorder(5, 5, 5, 5)
+        ));
+        return textField;
     }
-    
-    /**
-     * Metode terpusat untuk menjalankan logika pengembalian buku dan update UI.
-     */
-    private void prosesPengembalianBuku(String kodeBuku) {
+    private JLabel createStyledLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Lato", Font.BOLD, 14));
+        label.setForeground(Color.WHITE);
+        return label;
+    }
+    private JButton createStyledButton(String text, String iconPath) {
+        RoundedButton button = new RoundedButton(text); // Asumsi kelas RoundedButton ada
+        button.setFont(new Font("Lato", Font.BOLD, 12));
+        button.setBackground(new Color(218, 165, 32));
+        button.setForeground(Color.BLACK);
         try {
-            perpustakaan.kembalikanBuku(nim, kodeBuku);
-            perpustakaan.tambahStokBuku(kodeBuku);
-            JOptionPane.showMessageDialog(this, "Buku '" + kodeBuku + "' berhasil dikembalikan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            tampilkanTabelPinjamanMahasiswa();
+            ImageIcon icon = new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+            button.setIcon(icon);
+        } catch (Exception e) {
+            System.err.println("Ikon tidak ditemukan: " + iconPath);
+        }
+        return button;
+    }
+
+    private void pinjam() {
+        String kodeBuku = cariFieldPinjam.getText().trim();
+        if (kodeBuku.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Silakan masukkan kode buku.", "Input Kosong", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            String dataBuku = perpustakaan.cariBuku(kodeBuku);
+            if (dataBuku == null) {
+                JOptionPane.showMessageDialog(this, "Buku dengan kode '" + kodeBuku + "' tidak ditemukan.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            perpustakaan.kurangiStokBuku(kodeBuku);
+            String judulBuku = dataBuku.split(";")[1];
+            perpustakaan.pinjamBuku(nim, kodeBuku, judulBuku, LocalDate.now());
+            JOptionPane.showMessageDialog(this, "Buku '" + judulBuku + "' berhasil dipinjam!");
             tampilkanTabelSemuaPinjaman();
-            cariFieldKembali.setText("");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Gagal memproses pengembalian: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            tampilkanTabelPinjamanMahasiswa();
+            cariFieldPinjam.setText("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal meminjam buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    // ------------------ HELPER METHODS ------------------
     private String findPinjamanRecord(String nim, String kodeBuku) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
             String line;
@@ -403,57 +442,62 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
         return null;
     }
-
-    private JTable styledTable(DefaultTableModel model) {
-        JTable table = new JTable(model);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.setRowHeight(24);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.getTableHeader().setBackground(new Color(0x5D2E2E));
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setGridColor(Color.LIGHT_GRAY);
-        table.setSelectionBackground(new Color(0xA0522D));
-        table.setSelectionForeground(Color.WHITE);
-
-        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-                if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? new Color(0xF2E8DC) : new Color(0xEADBC8));
-                }
-                return c;
-            }
-        });
-        return table;
-    }
-
-    private void pinjam() {
-        String kodeBuku = cariFieldPinjam.getText().trim();
-        if (kodeBuku.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Silakan masukkan kode buku.", "Input Kosong", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
+    private void prosesPengembalianBuku(String kodeBuku) {
         try {
-            perpustakaan.kurangiStokBuku(kodeBuku); // Ini akan melempar Exception jika stok habis atau buku tidak ada
-            String dataBuku = perpustakaan.cariBuku(kodeBuku);
-            String judulBuku = dataBuku.split(";")[1];
-            
-            perpustakaan.pinjamBuku(nim, kodeBuku, judulBuku, LocalDate.now());
-
-            JOptionPane.showMessageDialog(this, "Buku '" + judulBuku + "' berhasil dipinjam!");
-            // Refresh kedua tabel
-            tampilkanTabelSemuaPinjaman();
+            perpustakaan.kembalikanBuku(nim, kodeBuku);
+            perpustakaan.tambahStokBuku(kodeBuku);
+            JOptionPane.showMessageDialog(this, "Buku '" + kodeBuku + "' berhasil dikembalikan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             tampilkanTabelPinjamanMahasiswa();
-            cariFieldPinjam.setText("");
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal meminjam buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            tampilkanTabelSemuaPinjaman();
+            cariFieldKembali.setText("");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Gagal memproses pengembalian: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    private void showPaymentDialog(String kodeBuku) {
+        JDialog paymentDialog = new JDialog(this, "Pembayaran Denda via QRIS", true);
+        paymentDialog.setSize(400, 500);
+        paymentDialog.setLayout(new BorderLayout(10, 10));
+        paymentDialog.getContentPane().setBackground(new Color(0x3B1A12));
 
-    // Menampilkan SEMUA data pinjaman di TAB PINJAM
+        ImageIcon qrIcon = new ImageIcon("qris.jpg");
+        JLabel qrLabel;
+        if (qrIcon.getImageLoadStatus() == MediaTracker.ERRORED || !new File("qris.jpg").exists()) {
+            qrLabel = new JLabel("Gagal memuat gambar qris.jpg", SwingConstants.CENTER);
+            qrLabel.setForeground(Color.RED);
+        } else {
+            Image image = qrIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            qrLabel = new JLabel(new ImageIcon(image));
+        }
+
+        JButton payButton = createStyledButton("Saya Sudah Bayar", "payment_icon.png");
+        payButton.addActionListener(e -> {
+            prosesPengembalianBuku(kodeBuku);
+            paymentDialog.dispose();
+        });
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        bottomPanel.setOpaque(false);
+        bottomPanel.add(payButton);
+
+        paymentDialog.add(qrLabel, BorderLayout.CENTER);
+        paymentDialog.add(bottomPanel, BorderLayout.SOUTH);
+        paymentDialog.setLocationRelativeTo(this);
+        paymentDialog.setVisible(true);
+    }
+    private boolean checkHasBorrowedBooks(String nim) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(nim + ";")) {
+                    return true;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        return false;
+    }
     public void tampilkanTabelSemuaPinjaman() {
         tabelModelPinjam.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
@@ -463,31 +507,25 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 tabelModelPinjam.addRow(parts);
             }
         } catch (IOException e) {
-            // Abaikan jika file belum ada
         }
     }
-
-    // Menampilkan data pinjaman HANYA MILIK MAHASISWA yang login di TAB PENGEMBALIAN
     public void tampilkanTabelPinjamanMahasiswa() {
         tabelModelKembali.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
-                // Cek apakah NIM cocok dengan mahasiswa yang login
                 if (parts[0].equals(nim)) {
-                    // Hanya tambahkan kolom yang relevan
                     tabelModelKembali.addRow(new Object[]{parts[1], parts[2], parts[3]});
                 }
             }
         } catch (IOException e) {
-            // Abaikan jika file belum ada
         }
     }
 
     public static void main(String[] args) {
-        // Simulasi login untuk testing
-        OperatorMahasiswa.nimLog = "000"; 
+
+        OperatorMahasiswa.nimLog = "000";
         OperatorMahasiswa.namaLog = "Guest";
         SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
     }

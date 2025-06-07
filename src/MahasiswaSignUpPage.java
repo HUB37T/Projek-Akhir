@@ -1,114 +1,197 @@
-
-
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MahasiswaSignUpPage extends JFrame {
-    OperatorMahasiswa operatorMahasiswa = new OperatorMahasiswa();
+
+    // Deklarasi semua komponen sebagai field
+    private OperatorMahasiswa operatorMahasiswa;
+    private CustomTextField nimField;
+    private CustomTextField nameField;
+    private CustomTextField prodiField;
+    private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField; // Field konfirmasi password
+    private RoundedButton signupButton;
+    private JLabel loginLabel;
+
     public MahasiswaSignUpPage() {
+        initFrame();
+        initComponents();
+        setupLayout();
+        registerEventListeners();
+
+        setVisible(true);
+    }
+
+    private void initFrame() {
         setTitle("Mahasiswa - Sign Up");
-        setSize(800, 600);
+        setSize(450, 700); // Ukuran disesuaikan untuk field tambahan
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE); // DISPOSE agar tidak menutup seluruh aplikasi
+        setResizable(false);
+        getContentPane().setBackground(new Color(0x3B1A12));
+    }
 
-        // Background Panel dengan warna solid (dari tone gambar)
-        JPanel backgroundPanel = new JPanel();
-        backgroundPanel.setBackground(new Color(0x3B1A12)); // cokelat gelap
-        backgroundPanel.setLayout(new GridBagLayout());
+    private void initComponents() {
+        operatorMahasiswa = new OperatorMahasiswa();
 
-        // Panel form isi
-        JPanel formPanel = new JPanel();
-        formPanel.setBackground(new Color(255, 255, 255, 210)); // putih semi-transparan
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
+        // Gunakan CustomTextField untuk semua input teks
+        nimField = new CustomTextField("nim_icon.png");
+        nameField = new CustomTextField("user_icon.png");
+        prodiField = new CustomTextField("prodi_icon.png"); // Ikon buku atau gedung
 
-        JLabel title = new JLabel("Sign Up Mahasiswa");
-        title.setFont(new Font("Georgia", Font.BOLD, 28));
-        title.setForeground(new Color(111, 0, 44));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Gunakan JPasswordField dengan gaya yang konsisten
+        passwordField = new JPasswordField();
+        stylePasswordField(passwordField);
 
-        JTextField nimField = createTextField("NIM");
-        JTextField namaField = createTextField("Nama");
-        JTextField prodiField = createTextField("Prodi");
-        JPasswordField passwordField = createPasswordField("Password");
+        confirmPasswordField = new JPasswordField();
+        stylePasswordField(confirmPasswordField);
 
-        JButton daftarBtn = createMaroonButton("Daftar");
-        daftarBtn.addActionListener(e -> {
-            String nim1 = nimField.getText().trim();
-            String nama1 = namaField.getText().trim();
-            String password1 = new String(passwordField.getPassword());
-            String prodi1 = prodiField.getText().trim();
+        signupButton = new RoundedButton("Daftar Akun");
 
-            if (nim1.isEmpty() || nama1.isEmpty() || password1.isEmpty() || prodi1.isEmpty()) {
+        loginLabel = new JLabel("<html>Sudah punya akun? <font color='#DAA520'>Login di sini</font></html>");
+    }
+
+    private void setupLayout() {
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 20, 10, 20);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // --- HEADER ---
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("signup_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        JLabel iconLabel = new JLabel(headerIcon);
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        mainPanel.add(iconLabel, gbc);
+
+        JLabel titleLabel = new JLabel("Pendaftaran Mahasiswa", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Lato", Font.BOLD, 30));
+        titleLabel.setForeground(Color.WHITE);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(10, 20, 20, 20);
+        mainPanel.add(titleLabel, gbc);
+
+        // --- FORM FIELDS ---
+        mainPanel.add(createLabel("NIM (Nomor Induk Mahasiswa)"), gbc(0, 2));
+        mainPanel.add(nimField, gbc(0, 3, 2, 1));
+
+        mainPanel.add(createLabel("Nama Lengkap"), gbc(0, 4));
+        mainPanel.add(nameField, gbc(0, 5, 2, 1));
+
+        mainPanel.add(createLabel("Program Studi"), gbc(0, 6));
+        mainPanel.add(prodiField, gbc(0, 7, 2, 1));
+
+        mainPanel.add(createLabel("Password"), gbc(0, 8));
+        mainPanel.add(passwordField, gbc(0, 9, 2, 1));
+
+        mainPanel.add(createLabel("Konfirmasi Password"), gbc(0, 10));
+        mainPanel.add(confirmPasswordField, gbc(0, 11, 2, 1));
+
+        // --- Tombol Daftar ---
+        signupButton.setFont(new Font("Lato", Font.BOLD, 18));
+        signupButton.setBackground(new Color(218, 165, 32));
+        signupButton.setForeground(Color.BLACK);
+        signupButton.setPreferredSize(new Dimension(100, 50));
+        mainPanel.add(signupButton, gbc(0, 12, 2, 1, new Insets(25, 20, 15, 20)));
+
+        // --- LINK LOGIN ---
+        loginLabel.setFont(new Font("Lato", Font.PLAIN, 14));
+        loginLabel.setForeground(Color.WHITE);
+        loginLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        loginLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        mainPanel.add(loginLabel, gbc(0, 13, 2, 1));
+
+        add(mainPanel);
+    }
+
+    private void registerEventListeners() {
+        // Fungsionalitas inti tetap sama, hanya ditambah validasi di depan
+        signupButton.addActionListener(e -> {
+            String nim = nimField.getText().trim();
+            String nama = nameField.getText().trim();
+            String prodi = prodiField.getText().trim();
+            String password = new String(passwordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+
+            // Validasi sebelum memanggil logika utama
+            if (nim.isEmpty() || nama.isEmpty() || prodi.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            } else {
-                try {
-                    operatorMahasiswa.daftarMahasiswa(nim1, nama1, password1, prodi1);
-                    SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
-                    JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, ex.getMessage());
-                }
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Password dan Konfirmasi Password tidak cocok.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Jika validasi lolos, jalankan fungsionalitas asli Anda
+            try {
+                operatorMahasiswa.daftarMahasiswa(nim, nama, password, prodi);
+                JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                new MahasiswaSignInPage(); // Buka halaman sign-in
+                dispose(); // Tutup halaman ini
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Gagal mendaftar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        JButton btnBack = new JButton("Back");
-        btnBack.setBounds(680, 520, 80, 30); // Atur koordinat agar pojok kanan bawah
-        btnBack.setBackground(new Color(0x800000));
-        btnBack.setForeground(Color.WHITE);
-        add(btnBack); // Tambahkan ke FRAME, bukan panel
-
-        btnBack.addActionListener(e -> {
-            new MahasiswaPage().setVisible(true);
-            dispose();
+        loginLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new MahasiswaSignInPage();
+                dispose();
+            }
         });
-
-        formPanel.add(title);
-        formPanel.add(Box.createVerticalStrut(25));
-        formPanel.add(nimField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(namaField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(prodiField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(passwordField);
-        formPanel.add(Box.createVerticalStrut(30));
-        formPanel.add(daftarBtn);
-
-        backgroundPanel.add(formPanel);
-        add(backgroundPanel);
     }
 
-    private JTextField createTextField(String placeholder) {
-        JTextField textField = new JTextField();
-        textField.setMaximumSize(new Dimension(300, 40));
-        textField.setFont(new Font("Lato", Font.PLAIN, 16));
-        textField.setBorder(BorderFactory.createTitledBorder(placeholder));
-        return textField;
+    // --- Helper Methods ---
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Lato", Font.BOLD, 14));
+        label.setForeground(new Color(220, 220, 220));
+        return label;
     }
 
-    private JPasswordField createPasswordField(String placeholder) {
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setMaximumSize(new Dimension(300, 40));
-        passwordField.setFont(new Font("Lato", Font.PLAIN, 16));
-        passwordField.setBorder(BorderFactory.createTitledBorder(placeholder));
-        return passwordField;
+    private void stylePasswordField(JPasswordField pf) {
+        pf.setFont(new Font("Lato", Font.PLAIN, 16));
+        pf.setForeground(Color.BLACK);
+        pf.setBackground(Color.WHITE);
+        pf.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(120, 120, 120)),
+                new EmptyBorder(8, 10, 8, 10)
+        ));
+        pf.setEchoChar('•');
     }
 
-    private JButton createMaroonButton(String text) {
-        JButton button = new JButton(text);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Lato", Font.BOLD, 18));
-        button.setBackground(new Color(111, 0, 44));
-        button.setForeground(Color.WHITE);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return button;
+    // (Helper `gbc` disederhanakan dari prompt sebelumnya agar tidak error jika disalin terpisah)
+    private GridBagConstraints gbc(int gridx, int gridy) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(5, 20, 0, 20);
+        return gbc;
+    }
+    private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight) {
+        GridBagConstraints gbc = gbc(gridx, gridy);
+        gbc.gridwidth = gridwidth;
+        gbc.gridheight = gridheight;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 20, 10, 20);
+        return gbc;
+    }
+    private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight, Insets insets) {
+        GridBagConstraints gbc = gbc(gridx, gridy, gridwidth, gridheight);
+        gbc.insets = insets;
+        return gbc;
     }
 
-     public static void main(String[] args) {
-         SwingUtilities.invokeLater(() -> new MahasiswaSignUpPage().setVisible(true));
-     }
+    public static void main(String[] args) {
+        // Pastikan Anda memiliki kelas CustomTextField dan RoundedButton di proyek
+        SwingUtilities.invokeLater(MahasiswaSignUpPage::new);
+    }
 }

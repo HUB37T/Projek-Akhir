@@ -1,3 +1,10 @@
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -7,42 +14,95 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
-public class AdminHomePage extends JFrame{
-    Perpustakaan perpustakaan = new Perpustakaan();
-    private JTable tableBuku;
-    private JTable tableTransaksi;
+public class AdminHomePage extends JFrame {
+    private Perpustakaan perpustakaan = new Perpustakaan();
     private DefaultTableModel modelBuku;
     private DefaultTableModel modelTransaksi;
+    private TableRowSorter<TableModel> sorterTransaksi;
+
+    private JTable tableBuku;
+    private JTable tableTransaksi;
     private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari;
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlah;
-    private int pengarangKe = 0;
-    private TableRowSorter<TableModel> sorterTransaksi; // Cukup satu sorter untuk transaksi
+    private int pengarangKe;
+
     public AdminHomePage() {
-        setTitle("Halaman Utama Admin");
-        setSize(800, 600);
+        initFrame();
+
+        JTabbedPane tabbedPane = createStyledTabbedPane();
+
+        tabbedPane.addTab("Manajemen Buku", createBukuPanel());
+        tabbedPane.addTab("Transaksi Mahasiswa", createTransaksiPanel());
+
+        add(tabbedPane);
+
+        tampilkanTabelBuku();
+        tampilkanTabelPinjam();
+
+        registerWindowListener();
+
+        setVisible(true);
+    }
+
+    private void initFrame() {
+        setTitle("Halaman Utama Admin - Perpustakaan");
+        setSize(950, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        getContentPane().setBackground(new Color(0x3B1A12));
+    }
+
+    private JTabbedPane createStyledTabbedPane() {
+        UIManager.put("TabbedPane.selected", new Color(0x5a382b));
+        UIManager.put("TabbedPane.contentAreaColor", new Color(0x5a382b));
+        UIManager.put("TabbedPane.background", new Color(0x3B1A12));
+        UIManager.put("TabbedPane.foreground", Color.WHITE);
+        UIManager.put("TabbedPane.darkShadow", Color.BLACK);
+        UIManager.put("TabbedPane.light", Color.GRAY);
+        UIManager.put("TabbedPane.focus", new Color(0xDAA520));
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Lato", Font.BOLD, 14));
+        return tabbedPane;
+    }
 
-        // Tab 1: Manajemen Buku
-        JPanel panelBuku = new JPanel(new BorderLayout());
+    // --- Panel Manajemen Buku ---
+    private JPanel createBukuPanel() {
+        JPanel panelBuku = new JPanel(new BorderLayout(10, 10));
+        panelBuku.setOpaque(false);
+        panelBuku.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        panelBuku.add(createBukuFormPanel(), BorderLayout.WEST);
+        panelBuku.add(createBukuTablePanel(), BorderLayout.CENTER);
+
+        return panelBuku;
+    }
+
+    private JPanel createBukuFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.setOpaque(false);
+        formPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)),
+                "Form Data Buku",
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new Font("Lato", Font.BOLD, 16),
+                new Color(0xDAA520)
+        ));
 
-        tfKode = new JTextField(15);
-        tfJudul = new JTextField(15);
-        tfPengarang = new JTextField(15);
-        tfJumlah = new JTextField(15);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+
+        tfKode = createStyledTextField();
+        tfJudul = createStyledTextField();
+        tfPengarang = createStyledTextField();
+        tfJumlah = createStyledTextField();
+
 
         String[] labels = {"Kode Buku", "Judul", "Jumlah Pengarang", "Jumlah"};
         JTextField[] fields = {tfKode, tfJudul, tfPengarang, tfJumlah};
@@ -50,73 +110,30 @@ public class AdminHomePage extends JFrame{
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
             gbc.gridy = i;
-            formPanel.add(new JLabel(labels[i]), gbc);
+            formPanel.add(createStyledLabel(labels[i]), gbc);
 
             gbc.gridx = 1;
+            gbc.weightx = 1.0;
             formPanel.add(fields[i], gbc);
+            gbc.weightx = 0;
         }
 
 
-        JPanel buttonPanel = new JPanel();
-        JButton btnAdd = new JButton("Add");
-        JButton btnEdit = new JButton("Edit");
-        JButton btnSearch = new JButton("Search");
-        JButton btnDelete = new JButton("Delete");
-        JButton refresh = new JButton("Refresh");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttonPanel.setOpaque(false);
+
+        JButton btnAdd = createStyledButton("Add", "add_icon.png");
+        JButton btnEdit = createStyledButton("Edit", "edit_icon.png");
+        JButton btnDelete = createStyledButton("Delete", "delete_icon.png");
+
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
-        buttonPanel.add(btnSearch);
         buttonPanel.add(btnDelete);
-        buttonPanel.add(refresh);
 
-
-        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0);
-        tableBuku = new JTable(modelBuku);
-
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BorderLayout());
-        centerPanel.add(buttonPanel, BorderLayout.NORTH);
-        centerPanel.add(new JScrollPane(tableBuku), BorderLayout.CENTER);
-
-        panelBuku.add(formPanel, BorderLayout.NORTH);
-        panelBuku.add(centerPanel, BorderLayout.CENTER);
-
-        // Tab 2: Transaksi Mahasiswa
-        JPanel panelTransaksi = new JPanel(new BorderLayout());
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        tfCari = new JTextField(20);
-        JButton btnCari = new JButton("Cari");
-        JButton btnSort = new JButton("Sort by Day");
-        JButton refreshButton = new JButton("Refresh");
-
-        topPanel.add(new JLabel("Cari:"));
-        topPanel.add(tfCari);
-        topPanel.add(btnCari);
-        topPanel.add(btnSort);
-        topPanel.add(refreshButton);
-
-        String[] columnNames = {"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"};
-        modelTransaksi = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 3) {
-                    return LocalDate.class;
-                }
-                return Object.class;
-            }
-        };
-        tableTransaksi = new JTable(modelTransaksi);
-
-        // PINDAHKAN & UBAH: Inisialisasi sorterTransaksi di sini, hanya sekali.
-        sorterTransaksi = new TableRowSorter<>(modelTransaksi);
-        tableTransaksi.setRowSorter(sorterTransaksi);
-
-        // HAPUS: Baris ini tidak diperlukan lagi karena duplikat.
-        // TableRowSorter<TableModel> sorter = new TableRowSorter<>(modelTransaksi);
-        // tableTransaksi.setRowSorter(sorter);
-
-        panelTransaksi.add(topPanel, BorderLayout.NORTH);
-        panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
+        gbc.gridy = labels.length;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 8, 8, 8);
+        formPanel.add(buttonPanel, gbc);
 
         btnAdd.addActionListener(e -> {
             try {
@@ -132,6 +149,29 @@ public class AdminHomePage extends JFrame{
                 throw new RuntimeException(ex);
             }
         });
+        btnDelete.addActionListener(e -> hapusBuku());
+
+        return formPanel;
+    }
+
+    private JPanel createBukuTablePanel() {
+        JPanel tablePanel = new JPanel(new BorderLayout(10, 10));
+        tablePanel.setOpaque(false);
+
+        JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topButtonPanel.setOpaque(false);
+        JButton btnSearch = createStyledButton("Search", "search_icon.png");
+        JButton refresh = createStyledButton("Refresh", "refresh_icon.png");
+        topButtonPanel.add(btnSearch);
+        topButtonPanel.add(refresh);
+
+        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0);
+        tableBuku = new JTable(modelBuku);
+        styleTable(tableBuku);
+
+        tablePanel.add(topButtonPanel, BorderLayout.NORTH);
+        tablePanel.add(new JScrollPane(tableBuku), BorderLayout.CENTER);
+
         btnSearch.addActionListener(e -> {
             try {
                 cariBuku();
@@ -139,48 +179,126 @@ public class AdminHomePage extends JFrame{
                 throw new RuntimeException(ex);
             }
         });
-        btnDelete.addActionListener(e -> hapusBuku());
         refresh.addActionListener(e -> tampilkanTabelBuku());
+
+        return tablePanel;
+    }
+
+    private JPanel createTransaksiPanel() {
+        JPanel panelTransaksi = new JPanel(new BorderLayout(10, 10));
+        panelTransaksi.setOpaque(false);
+        panelTransaksi.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        topPanel.setOpaque(false);
+        topPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)),
+                "Filter & Aksi",
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                new Font("Lato", Font.BOLD, 16),
+                new Color(0xDAA520)
+        ));
+
+        tfCari = createStyledTextField();
+        tfCari.setPreferredSize(new Dimension(200, 35));
+        JButton btnCari = createStyledButton("Cari", "search_icon.png");
+        JButton btnSort = createStyledButton("Sort by Day", "sort_icon.png");
+        JButton refreshButton = createStyledButton("Refresh", "refresh_icon.png");
+
+        topPanel.add(createStyledLabel("Cari NIM:"));
+        topPanel.add(tfCari);
+        topPanel.add(btnCari);
+        topPanel.add(btnSort);
+        topPanel.add(refreshButton);
+
+        String[] columnNames = {"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"};
+        modelTransaksi = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 3) { return LocalDate.class; }
+                return Object.class;
+            }
+        };
+        tableTransaksi = new JTable(modelTransaksi);
+        styleTable(tableTransaksi);
+
+        sorterTransaksi = new TableRowSorter<>(modelTransaksi);
+        tableTransaksi.setRowSorter(sorterTransaksi);
+
+        panelTransaksi.add(topPanel, BorderLayout.NORTH);
+        panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
+
         refreshButton.addActionListener(e -> tampilkanTabelPinjam());
-
-        // HAPUS: Inisialisasi kedua untuk sorterTransaksi di sini tidak diperlukan.
-        // sorterTransaksi = new TableRowSorter<>(modelTransaksi);
-        // tableTransaksi.setRowSorter(sorterTransaksi);
-
         btnCari.addActionListener(e -> {
             String teksPencarian = tfCari.getText().trim();
-
             if (teksPencarian.length() == 0) {
                 sorterTransaksi.setRowFilter(null);
             } else {
                 sorterTransaksi.setRowFilter(RowFilter.regexFilter("(?i)" + teksPencarian, 0));
             }
         });
-
-        // UBAH: Pastikan listener ini menggunakan field `sorterTransaksi`, bukan variabel lokal `sorter`.
         btnSort.addActionListener(e -> {
             List<RowSorter.SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
-            sorterTransaksi.setSortKeys(sortKeys); // Menggunakan sorterTransaksi yang benar
+            sorterTransaksi.setSortKeys(sortKeys);
         });
 
+        return panelTransaksi;
+    }
 
-        // Tambahkan ke tabbedPane
-        tabbedPane.addTab("Manajemen Buku", panelBuku);
-        tabbedPane.addTab("Transaksi Mahasiswa", panelTransaksi);
 
-        add(tabbedPane);
-        tampilkanTabelBuku();
-        tampilkanTabelPinjam();
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowActivated(WindowEvent e) {
-                tampilkanTabelBuku();
-                tampilkanTabelPinjam();
-            }
-        });
+    // --- Helper Methods untuk Styling & Fungsionalitas Asli ---
 
-        setVisible(true);
+    private void styleTable(JTable table) {
+        table.setBackground(new Color(0x4a2c2a));
+        table.setForeground(Color.WHITE);
+        table.setGridColor(new Color(0xDAA520));
+        table.setRowHeight(25);
+        table.setFont(new Font("Lato", Font.PLAIN, 14));
+        table.setSelectionBackground(new Color(0xDAA520));
+        table.setSelectionForeground(Color.BLACK);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(0xDAA520));
+        header.setForeground(Color.BLACK);
+        header.setFont(new Font("Lato", Font.BOLD, 16));
+
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+    }
+
+    private JTextField createStyledTextField() {
+        JTextField textField = new JTextField(15);
+        textField.setFont(new Font("Lato", Font.PLAIN, 14));
+        textField.setBackground(new Color(0x5a382b));
+        textField.setForeground(Color.WHITE);
+        textField.setCaretColor(Color.WHITE);
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0xDAA520)),
+                new EmptyBorder(5, 5, 5, 5)
+        ));
+        return textField;
+    }
+
+    private JLabel createStyledLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Lato", Font.BOLD, 14));
+        label.setForeground(Color.WHITE);
+        return label;
+    }
+
+    private JButton createStyledButton(String text, String iconPath) {
+        RoundedButton button = new RoundedButton(text);
+        button.setFont(new Font("Lato", Font.BOLD, 12));
+        button.setBackground(new Color(218, 165, 32));
+        button.setForeground(Color.BLACK);
+        try {
+            ImageIcon icon = new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+            button.setIcon(icon);
+        } catch (Exception e) {
+            System.err.println("Ikon tidak ditemukan: " + iconPath);
+        }
+        return button;
     }
     private void addBuku() throws IOException {
         String Kode = tfKode.getText();
@@ -351,6 +469,15 @@ public class AdminHomePage extends JFrame{
                 JOptionPane.showMessageDialog(this, "Gagal membaca file dataPinjam.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    private void registerWindowListener() {
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowActivated(WindowEvent e) {
+                tampilkanTabelBuku();
+                tampilkanTabelPinjam();
+            }
+        });
     }
 
     public static void main(String[] args) {
