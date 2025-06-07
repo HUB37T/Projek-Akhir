@@ -1,8 +1,10 @@
+
+
 import javax.swing.*;
 import java.awt.*;
 
 public class AdminSignUp extends JFrame {
-
+    OperatorAdmin operatorAdmin = new OperatorAdmin();
     public AdminSignUp() {
         setTitle("Admin Log In");
         setSize(400, 300);
@@ -96,10 +98,14 @@ public class AdminSignUp extends JFrame {
             if (email1.isEmpty() || nama1.isEmpty() || password1.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             } else {
-                // TODO: Simpan data atau proses pendaftaran
-                SwingUtilities.invokeLater(() -> new AdminHomePage().setVisible(true));
-                JOptionPane.showMessageDialog(this, "Admin berhasil terdaftar!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                try {
+                    operatorAdmin.daftarAdmin(email1, nama1, password1);
+                    SwingUtilities.invokeLater(() -> new AdminHomePage().setVisible(true));
+                    JOptionPane.showMessageDialog(this, "Admin berhasil terdaftar!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
             }
         });
 

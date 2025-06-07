@@ -1,6 +1,8 @@
-import javax.sound.sampled.*;
+
+
 import javax.swing.*;
 import java.awt.*;
+import javax.sound.sampled.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -86,6 +88,7 @@ public class GUIwithBackground extends JFrame {
         setContentPane(wrapper);
 
         Admin.addActionListener(e -> new AdminPage());
+        Mahasiswa.addActionListener(e -> new MahasiswaPage());
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

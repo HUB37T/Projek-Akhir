@@ -1,15 +1,22 @@
+
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class Mahasiswa {
+
     private String nim;
     private String nama;
     private String prodi;
     private long denda = 0;
+
     File penggunaFile = new File("dataMahasiswa.txt");
     public Mahasiswa(String nim, String nama, String prodi) {
+
+    File penggunaFile = new File("dataUser.txt");
+
         this.nim = nim;
         this.nama = nama;
         this.prodi = prodi;
@@ -54,6 +61,12 @@ public class Mahasiswa {
     public String getProdi() {
         return this.prodi;
     }
+
+
+    public long getDenda() {
+        return this.denda;
+    }
+    
 
     public String toString() {
         return nim + "," + nama + "," + prodi;

@@ -1,7 +1,6 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.List;
+
+import java.io.*;
+import java.util.*;
 public class OperatorAdmin {
     List<Admin> adminList;
     File adminFile = new File("dataAdmin.txt");
@@ -20,5 +19,20 @@ public class OperatorAdmin {
             throw new Exception(e.getMessage());
         }
         return false;
+    }
+    public void daftarAdmin(String email, String nama, String password) throws Exception {
+        try{
+            if(cekAdmin(email, nama, password)){
+                throw new Exception("Admin sudah terdaftar!");
+            }else {
+                FileWriter fw = new FileWriter(adminFile, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(email + ";" + nama + ";" + password);
+                bw.newLine();
+                bw.close();
+            }
+        }catch(Exception e){
+            throw new Exception(e.getMessage());
+        }
     }
 }
