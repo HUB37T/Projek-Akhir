@@ -1,5 +1,3 @@
-
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +20,7 @@ public class Perpustakaan {
         listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
+
     //Method untuk Tab Buku
     public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
         listBuku.add(new Buku(kode, judul, pengarang, i));
@@ -36,6 +35,12 @@ public class Perpustakaan {
                     return line;
                 }
             }
+            br.close();
+            fr.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -59,6 +64,14 @@ public class Perpustakaan {
                 }
                 writer.newLine();
             }
+            reader.close();
+            writer.close();
+
+            if (!bukuDitemukan) {
+                throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+            }
+        } catch (IOException e) {
+            throw new Exception("Terjadi kesalahan saat membaca/menulis file: " + e.getMessage());
         }
 
         if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
@@ -92,6 +105,7 @@ public class Perpustakaan {
     public void kurangiStokBuku(String kodeBuku) throws Exception {
         Path tempFile = Paths.get("bukuTemp.txt");
         boolean bukuDitemukan = false;
+        boolean stokHabis = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
              BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
@@ -104,7 +118,8 @@ public class Perpustakaan {
                     if (stokLama > 0) {
                         writer.write(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + (stokLama - 1));
                     } else {
-                        throw new Exception("Stok buku '" + parts[1] + "' sudah habis.");
+                        stokHabis = true;
+                        writer.write(currentLine); // Tulis kembali baris asli jika stok habis
                     }
                 } else {
                     writer.write(currentLine);
@@ -113,9 +128,10 @@ public class Perpustakaan {
             }
         }
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
-
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
+
+        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
+        if (stokHabis) throw new Exception("Stok buku sudah habis.");
     }
 
     public void pinjamBuku(String nim, String kodeBuku, String judul, LocalDate tanggal) throws Exception {
@@ -126,10 +142,64 @@ public class Perpustakaan {
             throw new Exception("Gagal mencatat data peminjaman: " + e.getMessage(), e);
         }
     }
+    
+    // =================================================================
+    // ==         METHOD BARU UNTUK FUNGSI PENGEMBALIAN BUKU          ==
+    // =================================================================
 
-    //Sampai Sini
+    public void tambahStokBuku(String kodeBuku) throws Exception {
+        Path tempFile = Paths.get("bukuTemp.txt");
+        boolean bukuDitemukan = false;
 
-    //Method untuk Tab Mahasiswa
+        try (BufferedReader reader = Files.newBufferedReader(fileBuku);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+                String[] parts = currentLine.split(";", -1);
+                if (parts.length > 3 && parts[0].equals(kodeBuku)) {
+                    bukuDitemukan = true;
+                    int stokLama = Integer.parseInt(parts[3]);
+                    writer.write(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + (stokLama + 1));
+                } else {
+                    writer.write(currentLine);
+                }
+                writer.newLine();
+            }
+        }
+
+        if (!bukuDitemukan) {
+            Files.deleteIfExists(tempFile);
+            throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan untuk penambahan stok.");
+        }
+        Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void kembalikanBuku(String nim, String kodeBuku) throws Exception {
+        Path tempFile = Paths.get("pinjamTemp.txt");
+        boolean bukuDipinjamDitemukan = false;
+
+        try (BufferedReader reader = Files.newBufferedReader(filePinjam);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+                String[] parts = currentLine.split(";", -1);
+                // Cek apakah NIM dan Kode Buku cocok, jika ya, jangan tulis baris ini (efeknya menghapus)
+                if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku) && !bukuDipinjamDitemukan) {
+                    bukuDipinjamDitemukan = true;
+                    continue; // Lewati baris ini
+                }
+                writer.write(currentLine);
+                writer.newLine();
+            }
+        }
+
+        if (!bukuDipinjamDitemukan) {
+            Files.deleteIfExists(tempFile);
+            throw new Exception("Anda tidak sedang meminjam buku dengan kode " + kodeBuku + ".");
+        }
+        Files.move(tempFile, filePinjam, StandardCopyOption.REPLACE_EXISTING);
+    }
+
     public void simpanMahasiswa(String nim, String nama, String prodi){
         listMahasiswa.add(new Mahasiswa(nim, nama, prodi));
     }
@@ -215,6 +285,4 @@ public class Perpustakaan {
             throw new Exception("User gagal dihapus");
         }
     }
-    //Sampai Sini
-
 }
