@@ -19,14 +19,12 @@ public class GUIwithBackground extends JFrame {
 
         playBackgroundMusic("sound.wav");
 
-        // Panel dengan background gambar dan layout manager
         BackgroundPanel bgPanel = new BackgroundPanel("Start.jpg");
         bgPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // === LABEL "Selamat datang!" dengan highlight dan glow ===
         JLabel label = new JLabel("Selamat datang!", SwingConstants.CENTER);
         label.setOpaque(true);
         label.setBackground(new Color(255, 215, 0, 180));
@@ -42,7 +40,6 @@ public class GUIwithBackground extends JFrame {
         bgPanel.add(label, gbc);
         gbc.gridwidth = 1;
 
-        // === TOMBOL Admin ===
         JButton Admin = new JButton("Admin");
         Admin.setPreferredSize(new Dimension(140, 35));
         Admin.setFont(new Font("Lato", Font.BOLD, 15));
@@ -54,7 +51,6 @@ public class GUIwithBackground extends JFrame {
         gbc.gridy = 1;
         bgPanel.add(Admin, gbc);
 
-        // === TOMBOL Mahasiswa ===
         JButton Mahasiswa = new JButton("Mahasiswa");
         Mahasiswa.setPreferredSize(new Dimension(140, 35));
         Mahasiswa.setFont(new Font("Lato", Font.BOLD, 15));
@@ -66,7 +62,6 @@ public class GUIwithBackground extends JFrame {
         gbc.gridy = 1;
         bgPanel.add(Mahasiswa, gbc);
 
-        // === WRAPPER UTAMA PAKAI BORDERLAYOUT ===
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setOpaque(false);
 
