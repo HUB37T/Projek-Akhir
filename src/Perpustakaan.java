@@ -20,6 +20,7 @@ public class Perpustakaan {
         listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
+
     //Method untuk Tab Buku
     public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
         listBuku.add(new Buku(kode, judul, pengarang, i));
@@ -34,6 +35,12 @@ public class Perpustakaan {
                     return line;
                 }
             }
+            br.close();
+            fr.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -57,6 +64,14 @@ public class Perpustakaan {
                 }
                 writer.newLine();
             }
+            reader.close();
+            writer.close();
+
+            if (!bukuDitemukan) {
+                throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+            }
+        } catch (IOException e) {
+            throw new Exception("Terjadi kesalahan saat membaca/menulis file: " + e.getMessage());
         }
 
         if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
