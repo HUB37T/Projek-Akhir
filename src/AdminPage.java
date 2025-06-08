@@ -61,13 +61,13 @@ public class AdminPage extends JFrame {
         mainPanel.add(titleLabel, gbc);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        buttonPanel.setOpaque(false); // Buat transparan agar menyatu dengan background mainPanel
+        buttonPanel.setOpaque(false);
         buttonPanel.add(loginButton);
         buttonPanel.add(signupButton);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.insets = new Insets(20, 10, 10, 10); // Beri jarak lebih dari judul
+        gbc.insets = new Insets(20, 10, 10, 10);
         mainPanel.add(buttonPanel, gbc);
 
         setContentPane(mainPanel);

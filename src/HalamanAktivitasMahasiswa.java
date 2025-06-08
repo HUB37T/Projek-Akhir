@@ -76,8 +76,11 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
                 new Font("Lato", Font.BOLD, 16), new Color(0xDAA520)));
 
+        //FIeld
         cariFieldPinjam = createStyledTextField();
         cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
+
+        //button
         JButton cariBtn = createStyledButton("Cari Buku", "search_icon.png");
         JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "borrow_icon.png");
         JButton listBtn = createStyledButton("List Buku Tersedia", "list_icon.png");
@@ -164,8 +167,11 @@ public class HalamanAktivitasMahasiswa extends JFrame {
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
                 new Font("Lato", Font.BOLD, 16), new Color(0xDAA520)));
 
+        //field
         cariFieldKembali = createStyledTextField();
         cariFieldKembali.setPreferredSize(new Dimension(200, 35));
+
+        //button
         JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "return_icon.png");
         JButton listBtn = createStyledButton("List Buku Dipinjam", "list_icon.png");
 
@@ -174,6 +180,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         topPanel.add(kembalikanBtn);
         topPanel.add(listBtn);
 
+        //tabel
         tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
         tabelKembali = new JTable(tabelModelKembali);
         styleTable(tabelKembali);
@@ -407,6 +414,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return button;
     }
 
+    //Method pinjam
     private void pinjam() {
         String kodeBuku = cariFieldPinjam.getText().trim();
         if (kodeBuku.isEmpty()) {
@@ -442,6 +450,8 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
         return null;
     }
+
+    //method kembaliin
     private void prosesPengembalianBuku(String kodeBuku) {
         try {
             perpustakaan.kembalikanBuku(nim, kodeBuku);
@@ -454,6 +464,21 @@ public class HalamanAktivitasMahasiswa extends JFrame {
             JOptionPane.showMessageDialog(this, "Gagal memproses pengembalian: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    private boolean checkHasBorrowedBooks(String nim) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(nim + ";")) {
+                    return true;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        return false;
+    }
+
+    //method bayar
     private void showPaymentDialog(String kodeBuku) {
         JDialog paymentDialog = new JDialog(this, "Pembayaran Denda via QRIS", true);
         paymentDialog.setSize(400, 500);
@@ -485,19 +510,8 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         paymentDialog.setLocationRelativeTo(this);
         paymentDialog.setVisible(true);
     }
-    private boolean checkHasBorrowedBooks(String nim) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(nim + ";")) {
-                    return true;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            return false;
-        }
-        return false;
-    }
+
+    //tampilkan tabel
     public void tampilkanTabelSemuaPinjaman() {
         tabelModelPinjam.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
@@ -524,7 +538,6 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     }
 
     public static void main(String[] args) {
-
         OperatorMahasiswa.nimLog = "000";
         OperatorMahasiswa.namaLog = "Guest";
         SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
