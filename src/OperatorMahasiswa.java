@@ -21,14 +21,12 @@ public class OperatorMahasiswa {
                 }
             }
         } catch (FileNotFoundException e) {
-            // Jika file tidak ada, anggap saja login gagal.
             return false;
         }
         return false;
     }
 
     public void daftarMahasiswa(String nim, String nama, String password, String prodi) throws Exception {
-        // Cek dulu apakah NIM sudah ada
         try (BufferedReader br = new BufferedReader(new FileReader(mahasiswaFile))) {
             String line;
             while((line = br.readLine()) != null) {
@@ -37,7 +35,6 @@ public class OperatorMahasiswa {
                 }
             }
         } catch (FileNotFoundException e) {
-            // File belum ada, tidak masalah, lanjutkan pendaftaran.
         }
 
         nimLog = nim;
@@ -48,14 +45,6 @@ public class OperatorMahasiswa {
         }
     }
 
-    // =========================================================================
-    // ==                      METHOD BARU UNTUK MANAJEMEN                    ==
-    // =========================================================================
-
-    /**
-     * Mengambil data lengkap seorang mahasiswa berdasarkan NIM.
-     * @return String array berisi [nim, nama, password, prodi], atau null jika tidak ditemukan.
-     */
     public String[] getMahasiswaData(String nim) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(mahasiswaFile))) {
             String line;
@@ -68,9 +57,6 @@ public class OperatorMahasiswa {
         return null;
     }
 
-    /**
-     * Mengedit data mahasiswa di file dataMahasiswa.txt.
-     */
     public void editMahasiswa(String oldNim, String newNama, String newPassword, String newProdi) throws IOException {
         Path source = Paths.get("dataMahasiswa.txt");
         Path temp = Paths.get("mahasiswaTemp.txt");
@@ -94,9 +80,6 @@ public class OperatorMahasiswa {
         Files.move(temp, source, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    /**
-     * Menghapus data mahasiswa dari file dataMahasiswa.txt.
-     */
     public void hapusMahasiswa(String nim) throws IOException {
         Path source = Paths.get("dataMahasiswa.txt");
         Path temp = Paths.get("mahasiswaTemp.txt");
@@ -108,7 +91,7 @@ public class OperatorMahasiswa {
             while ((currentLine = reader.readLine()) != null) {
                 if (currentLine.startsWith(nim + ";")) {
                     found = true;
-                    continue; // Lewati baris ini untuk menghapusnya
+                    continue;
                 }
                 writer.write(currentLine + System.lineSeparator());
             }

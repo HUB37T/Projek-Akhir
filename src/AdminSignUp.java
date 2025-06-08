@@ -108,7 +108,7 @@ public class AdminSignUp extends JFrame {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AdminLogIn();
+                new AdminHomePage();
                 dispose();
             }
         });
@@ -140,7 +140,7 @@ public class AdminSignUp extends JFrame {
         try {
             operatorAdmin.daftarAdmin(email, name, password);
             JOptionPane.showMessageDialog(this, "Admin berhasil terdaftar! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            new AdminLogIn();
+            new AdminHomePage();
             dispose();
         } catch (Exception ex) {
             showError("Gagal mendaftar: " + ex.getMessage());
