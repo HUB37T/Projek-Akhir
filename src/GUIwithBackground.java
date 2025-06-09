@@ -42,18 +42,20 @@ public class GUIwithBackground extends JFrame {
     }
 
     private void initComponents() {
-
         adminButton = new RoundedButton("Admin");
         styleMainButton(adminButton);
+        adminButton.setToolTipText("Masuk sebagai pengelola sistem perpustakaan");
 
         mahasiswaButton = new RoundedButton("Mahasiswa");
         styleMainButton(mahasiswaButton);
 
         exitButton = new JButton("Exit");
         styleBottomButton(exitButton, new Color(139, 0, 0));
+        exitButton.setToolTipText("Keluar dari aplikasi (ESC)");
 
         muteButton = new JButton("Mute");
         styleBottomButton(muteButton, new Color(0, 100, 0));
+        muteButton.setToolTipText("Heningkan atau bunyikan musik latar");
 
         clockLabel = new JLabel("Memuat...");
         clockLabel.setFont(new Font("Lato", Font.PLAIN, 16));
@@ -112,14 +114,22 @@ public class GUIwithBackground extends JFrame {
     }
 
     private void registerEventListeners() {
-        adminButton.addActionListener(e -> new AdminPage());
-        mahasiswaButton.addActionListener(e -> new MahasiswaPage());
         exitButton.addActionListener(e -> showExitConfirmation());
 
         muteButton.addActionListener(e -> toggleMute());
 
         Timer clockTimer = new Timer(1000, e -> updateClock());
         clockTimer.start();
+
+        adminButton.addActionListener(e -> {
+            playSoundEffect("click.wav");
+            new AdminPage();
+        });
+        mahasiswaButton.addActionListener(e -> {
+            playSoundEffect("click.wav");
+            new MahasiswaPage();
+        });
+
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -143,6 +153,22 @@ public class GUIwithBackground extends JFrame {
                 System.err.println("File musik tidak ditemukan: " + filePath);
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void playSoundEffect(String filePath) {
+        try {
+            File audioFile = new File(filePath);
+            if (audioFile.exists()) {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                Clip sfxClip = AudioSystem.getClip();
+                sfxClip.open(audioStream);
+                sfxClip.start();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
