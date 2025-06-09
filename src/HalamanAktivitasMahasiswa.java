@@ -401,7 +401,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         return label;
     }
     private JButton createStyledButton(String text, String iconPath) {
-        RoundedButton button = new RoundedButton(text); // Asumsi kelas RoundedButton ada
+        RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
         button.setForeground(Color.BLACK);
