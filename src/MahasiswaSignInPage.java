@@ -142,7 +142,7 @@ public class MahasiswaSignInPage extends JFrame {
     private void stylePasswordField(JPasswordField pf) {
         pf.setFont(new Font("Lato", Font.PLAIN, 16));
         pf.setForeground(Color.BLACK);
-        pf.setBackground(Color.WHITE);
+        pf.setBackground(Color.BLACK);
         pf.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(120, 120, 120)),
                 new EmptyBorder(8, 10, 8, 10)

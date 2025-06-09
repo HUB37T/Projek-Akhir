@@ -22,7 +22,7 @@ class CustomTextField extends JPanel {
         textField = new JTextField();
         textField.setFont(new Font("Lato", Font.PLAIN, 16));
         textField.setForeground(Color.WHITE);
-        textField.setCaretColor(Color.BLACK);
+        textField.setCaretColor(Color.WHITE);
         textField.setOpaque(false);
         textField.setBorder(null);
 
