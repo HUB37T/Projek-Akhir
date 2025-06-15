@@ -20,7 +20,7 @@ public class Perpustakaan {
         listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
-    //Method untuk Tab Buku
+
     public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
         listBuku.add(new Buku(kode, judul, pengarang, i));
     }
