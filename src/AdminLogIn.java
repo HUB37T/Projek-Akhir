@@ -41,7 +41,7 @@ public class AdminLogIn extends JFrame {
         passwordField = new JPasswordField();
         passwordField.setFont(new Font("Lato", Font.PLAIN, 16));
         passwordField.setForeground(Color.BLACK);
-        passwordField.setBackground(Color.BLACK);
+        passwordField.setBackground(Color.WHITE);
         passwordField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(120, 120, 120)),
                 new EmptyBorder(8, 10, 8, 10)

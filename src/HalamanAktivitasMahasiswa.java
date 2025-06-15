@@ -174,11 +174,13 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         //button
         JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "return_icon.png");
         JButton listBtn = createStyledButton("List Buku Dipinjam", "list_icon.png");
+        JButton refreshBtn = createStyledButton("Refresh", "refresh_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
         topPanel.add(kembalikanBtn);
         topPanel.add(listBtn);
+        topPanel.add(refreshBtn);
 
         //tabel
         tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
@@ -262,6 +264,10 @@ public class HalamanAktivitasMahasiswa extends JFrame {
             }
         });
 
+        refreshBtn.addActionListener(e -> {
+            tampilkanTabelPinjamanMahasiswa();
+            tampilkanTabelSemuaPinjaman();
+        });
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(tableScroll, BorderLayout.CENTER);
         return panel;
