@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GUIwithBackground extends JFrame {
+public class Main extends JFrame {
     private Clip backgroundClip;
     private boolean isMuted = false;
 
@@ -19,7 +19,7 @@ public class GUIwithBackground extends JFrame {
     private JLabel clockLabel;
 
 
-    public GUIwithBackground() {
+    public Main() {
         initFrame();
         initComponents();
         setupLayout();
@@ -262,7 +262,7 @@ public class GUIwithBackground extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GUIwithBackground::new);
+        SwingUtilities.invokeLater(Main::new);
     }
 }
 

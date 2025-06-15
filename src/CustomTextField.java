@@ -12,7 +12,7 @@ class CustomTextField extends JPanel {
         try {
             ImageIcon icon = new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
             JLabel iconLabel = new JLabel(icon);
-            iconLabel.setBorder(new EmptyBorder(0, 10, 0, 10)); // Beri padding di sekitar ikon
+            iconLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
             add(iconLabel, BorderLayout.WEST);
         } catch (Exception e) {
             System.err.println("Ikon tidak ditemukan: " + iconPath);
