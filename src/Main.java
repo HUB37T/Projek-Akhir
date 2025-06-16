@@ -7,19 +7,24 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.io.InputStream;
 
 public class Main extends JFrame {
     private Clip backgroundClip;
     private boolean isMuted = false;
+    private FloatControl gainControl;
 
     private RoundedButton adminButton;
     private RoundedButton mahasiswaButton;
     private JButton exitButton;
     private JButton muteButton;
     private JLabel clockLabel;
+    private JSlider volumeSlider;
 
+    private Font poppinsRegularFont;
 
     public Main() {
+        loadCustomsFonts();
         initFrame();
         initComponents();
         setupLayout();
@@ -32,6 +37,24 @@ public class Main extends JFrame {
     }
 
     // --- (Helper Methods) ---
+
+    private void loadCustomsFonts() {
+        try {
+            InputStream isPoppinsRegular = getClass().getResourceAsStream("/fonts/Poppin-Story.ttf");
+            if (isPoppinsRegular != null) {
+                poppinsRegularFont = Font.createFont(Font.TRUETYPE_FONT, isPoppinsRegular);
+                isPoppinsRegular.close();
+            } else {
+                System.err.println("Gagal memuat font. Font tidak ditemukan di resource");
+                poppinsRegularFont = new Font("Arial", Font.PLAIN, 16);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat font. Font tidak ditemukan di resource");
+            poppinsRegularFont = new Font("Arial", Font.PLAIN, 16);
+        }
+    }
 
     private void initFrame() {
         setTitle("Sistem Perpustakaan - Selamat Datang");
@@ -73,7 +96,7 @@ public class Main extends JFrame {
         welcomeLabel.setOpaque(true);
         welcomeLabel.setBackground(new Color(255, 215, 0, 180));
         welcomeLabel.setForeground(Color.BLACK);
-        welcomeLabel.setFont(new Font("Lato", Font.BOLD, 28));
+        welcomeLabel.setFont(poppinsRegularFont.deriveFont(Font.BOLD, 32));
         welcomeLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(255, 255, 153, 180), 4),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
