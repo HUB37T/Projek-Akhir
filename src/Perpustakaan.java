@@ -20,7 +20,7 @@ public class Perpustakaan {
         listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
-    //Method untuk Tab Buku
+
     public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
         listBuku.add(new Buku(kode, judul, pengarang, i));
     }
@@ -37,7 +37,6 @@ public class Perpustakaan {
         }
         return null;
     }
-
 
     public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
         Path tempFile = Paths.get("bukuTemp.txt");
@@ -87,6 +86,7 @@ public class Perpustakaan {
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
+    //Method untuk Pinjam Buku
     public void kurangiStokBuku(String kodeBuku) throws Exception {
         Path tempFile = Paths.get("bukuTemp.txt");
         boolean bukuDitemukan = false;
@@ -128,10 +128,7 @@ public class Perpustakaan {
         }
     }
     
-    // =================================================================
-    // ==         METHOD BARU UNTUK FUNGSI PENGEMBALIAN BUKU          ==
-    // =================================================================
-
+    //Method untuk kembaliin buku
     public void tambahStokBuku(String kodeBuku) throws Exception {
         Path tempFile = Paths.get("bukuTemp.txt");
         boolean bukuDitemukan = false;
@@ -168,10 +165,9 @@ public class Perpustakaan {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] parts = currentLine.split(";", -1);
-                // Cek apakah NIM dan Kode Buku cocok, jika ya, jangan tulis baris ini (efeknya menghapus)
                 if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku) && !bukuDipinjamDitemukan) {
                     bukuDipinjamDitemukan = true;
-                    continue; // Lewati baris ini
+                    continue;
                 }
                 writer.write(currentLine);
                 writer.newLine();
@@ -183,91 +179,5 @@ public class Perpustakaan {
             throw new Exception("Anda tidak sedang meminjam buku dengan kode " + kodeBuku + ".");
         }
         Files.move(tempFile, filePinjam, StandardCopyOption.REPLACE_EXISTING);
-    }
-
-    public void simpanMahasiswa(String nim, String nama, String prodi){
-        listMahasiswa.add(new Mahasiswa(nim, nama, prodi));
-    }
-    public String cariMahasiswa(String nim){
-        for (Mahasiswa pengguna : listMahasiswa) {
-            if(pengguna.getNim().equals(nim)){
-                return "NIM: "+ pengguna.getNim()+" Nama: "+pengguna.getNama()+" Prodi: "+pengguna.getProdi();
-            }
-        }
-        return null;
-    }
-
-    public void editMahasiswa(String nim, String nama, String prodi) throws Exception{
-        for(Mahasiswa pengguna : listMahasiswa){
-            if(pengguna.getNim().equals(nim)){
-                pengguna.setNama(nama);
-                pengguna.setProdi(prodi);
-            }
-        }
-        File inputFile = new File("dataUser.txt");
-        File tempFile = new File("userTemp.txt");
-
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
-        ) {
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-
-                String[] parts = currentLine.split(",");
-
-                if (parts.length > 0 && parts[0].equals(nim)) {
-                    String lineBaru = nim + ";" + nama + ";" + prodi;
-                    writer.write(lineBaru);
-                } else {
-                    writer.write(currentLine);
-                }
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (inputFile.delete()) {
-            tempFile.renameTo(inputFile);
-        } else {
-            throw new Exception("User gagal diedit!");
-        }
-    }
-
-    public void hapusMahasiswa(String nim) throws Exception{
-        for (Mahasiswa pengguna : listMahasiswa) {
-            if(pengguna.getNim().equals(nim)){
-                listMahasiswa.remove(pengguna);
-            }
-        }
-        File inputFile = new File("dataUser.txt");
-        File tempFile = new File("userTemp.txt");
-
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
-        ) {
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-
-                String[] parts = currentLine.split(";");
-                if (parts.length > 0 && parts[0].equals(nim)) {
-                    continue;
-                }
-                writer.write(currentLine);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (inputFile.delete()) {
-            tempFile.renameTo(inputFile);
-        } else {
-            throw new Exception("User gagal dihapus");
-        }
     }
 }

@@ -5,8 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MahasiswaSignInPage extends JFrame {
-
-    // Deklarasi komponen dikembalikan menjadi 4 field
     private OperatorMahasiswa operator;
     private CustomTextField nimField;
     private CustomTextField nameField;
@@ -26,19 +24,20 @@ public class MahasiswaSignInPage extends JFrame {
 
     private void initFrame() {
         setTitle("Mahasiswa - Sign In");
-        setSize(450, 700); // Frame dipertinggi untuk memuat semua field
+        setSize(450, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(new Color(0x3B1A12));
     }
 
+    //Field untuk input
     private void initComponents() {
         operator = new OperatorMahasiswa();
 
         nimField = new CustomTextField("nim_icon.png");
-        nameField = new CustomTextField("user_icon.png"); // Field nama
-        prodiField = new CustomTextField("prodi_icon.png"); // Field prodi
+        nameField = new CustomTextField("user_icon.png");
+        prodiField = new CustomTextField("prodi_icon.png");
 
         passwordField = new JPasswordField();
         stylePasswordField(passwordField);
@@ -70,7 +69,7 @@ public class MahasiswaSignInPage extends JFrame {
         gbc.insets = new Insets(10, 20, 20, 20);
         mainPanel.add(titleLabel, gbc);
 
-        // --- FORM FIELDS (4 BUAH) ---
+        // --- FORM FIELDS
         mainPanel.add(createLabel("NIM (Nomor Induk Mahasiswa)"), gbc(0, 2));
         mainPanel.add(nimField, gbc(0, 3, 2, 1));
 
@@ -102,7 +101,6 @@ public class MahasiswaSignInPage extends JFrame {
 
     private void registerEventListeners() {
         loginButton.addActionListener(e -> {
-            // Logika disesuaikan kembali dengan 4 field
             String nim = nimField.getText().trim();
             String nama = nameField.getText().trim();
             String password = new String(passwordField.getPassword());
@@ -112,7 +110,6 @@ public class MahasiswaSignInPage extends JFrame {
                 JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             } else {
                 try {
-                    // Memanggil method cekMahasiswa dengan 4 parameter sesuai fungsionalitas asli
                     if (operator.cekMahasiswa(nim, nama, password, prodi)) {
                         SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa());
                         dispose();

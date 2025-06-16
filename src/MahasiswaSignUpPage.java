@@ -10,7 +10,7 @@ public class MahasiswaSignUpPage extends JFrame {
     private CustomTextField nameField;
     private CustomTextField prodiField;
     private JPasswordField passwordField;
-    private JPasswordField confirmPasswordField; // Field konfirmasi password
+    private JPasswordField confirmPasswordField;
     private RoundedButton signupButton;
     private JLabel loginLabel;
 
@@ -25,9 +25,9 @@ public class MahasiswaSignUpPage extends JFrame {
 
     private void initFrame() {
         setTitle("Mahasiswa - Sign Up");
-        setSize(450, 700); // Ukuran disesuaikan untuk field tambahan
+        setSize(450, 700);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE); // DISPOSE agar tidak menutup seluruh aplikasi
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(new Color(0x3B1A12));
     }
@@ -112,6 +112,15 @@ public class MahasiswaSignUpPage extends JFrame {
             String password = new String(passwordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
 
+            if (password.length() < 8) {
+                showError("Password minimal harus 8 karakter.");
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                showError("Password dan konfirmasi password tidak cocok.");
+                return;
+            }
+
             if (nim.isEmpty() || nama.isEmpty() || prodi.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field wajib diisi.", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -124,8 +133,8 @@ public class MahasiswaSignUpPage extends JFrame {
             try {
                 operatorMahasiswa.daftarMahasiswa(nim, nama, password, prodi);
                 JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                new MahasiswaSignInPage(); // Buka halaman sign-in
-                dispose(); // Tutup halaman ini
+                new HalamanAktivitasMahasiswa();
+                dispose();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Gagal mendaftar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -180,9 +189,11 @@ public class MahasiswaSignUpPage extends JFrame {
         gbc.insets = insets;
         return gbc;
     }
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Peringatan", JOptionPane.WARNING_MESSAGE);
+    }
 
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(MahasiswaSignUpPage::new);
     }
 }

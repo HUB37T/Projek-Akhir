@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GUIwithBackground extends JFrame {
+public class Main extends JFrame {
     private Clip backgroundClip;
     private boolean isMuted = false;
 
@@ -19,7 +19,7 @@ public class GUIwithBackground extends JFrame {
     private JLabel clockLabel;
 
 
-    public GUIwithBackground() {
+    public Main() {
         initFrame();
         initComponents();
         setupLayout();
@@ -42,18 +42,20 @@ public class GUIwithBackground extends JFrame {
     }
 
     private void initComponents() {
-
         adminButton = new RoundedButton("Admin");
         styleMainButton(adminButton);
+        adminButton.setToolTipText("Masuk sebagai pengelola sistem perpustakaan");
 
         mahasiswaButton = new RoundedButton("Mahasiswa");
         styleMainButton(mahasiswaButton);
 
         exitButton = new JButton("Exit");
         styleBottomButton(exitButton, new Color(139, 0, 0));
+        exitButton.setToolTipText("Keluar dari aplikasi (ESC)");
 
         muteButton = new JButton("Mute");
         styleBottomButton(muteButton, new Color(0, 100, 0));
+        muteButton.setToolTipText("Heningkan atau bunyikan musik latar");
 
         clockLabel = new JLabel("Memuat...");
         clockLabel.setFont(new Font("Lato", Font.PLAIN, 16));
@@ -112,14 +114,22 @@ public class GUIwithBackground extends JFrame {
     }
 
     private void registerEventListeners() {
-        adminButton.addActionListener(e -> new AdminPage());
-        mahasiswaButton.addActionListener(e -> new MahasiswaPage());
         exitButton.addActionListener(e -> showExitConfirmation());
 
         muteButton.addActionListener(e -> toggleMute());
 
         Timer clockTimer = new Timer(1000, e -> updateClock());
         clockTimer.start();
+
+        adminButton.addActionListener(e -> {
+            playSoundEffect("click.wav");
+            new AdminPage();
+        });
+        mahasiswaButton.addActionListener(e -> {
+            playSoundEffect("click.wav");
+            new MahasiswaPage();
+        });
+
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -143,6 +153,22 @@ public class GUIwithBackground extends JFrame {
                 System.err.println("File musik tidak ditemukan: " + filePath);
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void playSoundEffect(String filePath) {
+        try {
+            File audioFile = new File(filePath);
+            if (audioFile.exists()) {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                Clip sfxClip = AudioSystem.getClip();
+                sfxClip.open(audioStream);
+                sfxClip.start();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -236,54 +262,7 @@ public class GUIwithBackground extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GUIwithBackground::new);
+        SwingUtilities.invokeLater(Main::new);
     }
 }
 
-class RoundedButton extends JButton {
-    private Color originalBackgroundColor;
-    private Color hoverBackgroundColor;
-
-    public RoundedButton(String text) {
-        super(text);
-        setOpaque(false);
-        setContentAreaFilled(false);
-        setFocusPainted(false);
-        setBorderPainted(false);
-
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-
-                if (hoverBackgroundColor != null) {
-                    originalBackgroundColor = getBackground();
-                    setBackground(hoverBackgroundColor);
-                }
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-
-                setBackground(originalBackgroundColor);
-            }
-        });
-    }
-
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-        originalBackgroundColor = bg;
-        hoverBackgroundColor = (bg != null) ? bg.brighter() : null;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(getBackground()); // Gunakan warna background saat ini
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25); // Radius lengkungan
-
-        super.paintComponent(g2);
-        g2.dispose();
-    }
-}

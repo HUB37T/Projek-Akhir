@@ -1,2 +1,2 @@
-hubertcendana@gmail.com;Hubert Cendana;12345678
-orieabyanm@gmail.co;Orie Abyan Maulana;12345678
+hubertcendana@gmail.com;Hubert;12345678
+hubert@gmail.com;Hubert;12345678
