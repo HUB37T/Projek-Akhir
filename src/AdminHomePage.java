@@ -1,10 +1,3 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,6 +7,13 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class AdminHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
@@ -351,7 +351,7 @@ public class AdminHomePage extends JFrame {
     }
     public void tampilkanTabelBuku() {
         modelBuku.setRowCount(0);
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataBuku.txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("data/dataBuku.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";", -1);
@@ -359,7 +359,7 @@ public class AdminHomePage extends JFrame {
             }
         } catch (IOException e) {
             try {
-                Files.createFile(Paths.get("dataBuku.txt"));
+                Files.createFile(Paths.get("data/dataBuku.txt"));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Gagal membaca file dataBuku.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -450,7 +450,7 @@ public class AdminHomePage extends JFrame {
             tfCari.setText("");
         }
         modelTransaksi.setRowCount(0);
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataPinjam.txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("data/dataPinjam.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";", -1);
@@ -464,7 +464,7 @@ public class AdminHomePage extends JFrame {
             }
         } catch (IOException e) {
             try {
-                Files.createFile(Paths.get("dataPinjam.txt"));
+                Files.createFile(Paths.get("data/dataPinjam.txt"));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Gagal membaca file dataPinjam.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

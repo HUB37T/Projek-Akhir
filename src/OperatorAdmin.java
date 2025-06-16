@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.*;
 public class OperatorAdmin {
     List<Admin> adminList;
-    File adminFile = new File("dataAdmin.txt");
+    File adminFile = new File("data/dataAdmin.txt");
     public boolean cekAdmin(String email, String nama, String password) throws Exception {
         try{
             FileReader fr = new FileReader(adminFile);

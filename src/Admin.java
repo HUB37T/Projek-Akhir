@@ -7,7 +7,7 @@ public class Admin {
     private String email;
     private String nama;
     private String password;
-    File penggunaFile = new File("dataAdmin.txt");
+    File penggunaFile = new File("data/dataAdmin.txt");
 
     public Admin(String email, String nama, String password) {
         this.email = email;

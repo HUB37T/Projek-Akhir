@@ -3,10 +3,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
 
 public class OperatorMahasiswa {
-    File mahasiswaFile = new File("dataMahasiswa.txt");
+    File mahasiswaFile = new File("./data/dataMahasiswa.txt");
     public static String nimLog, namaLog;
 
     public boolean cekMahasiswa(String nim, String nama, String password, String prodi) throws IOException {
@@ -58,8 +57,8 @@ public class OperatorMahasiswa {
     }
 
     public void editMahasiswa(String oldNim, String newNama, String newPassword, String newProdi) throws IOException {
-        Path source = Paths.get("dataMahasiswa.txt");
-        Path temp = Paths.get("mahasiswaTemp.txt");
+        Path source = Paths.get("data/dataMahasiswa.txt");
+        Path temp = Paths.get("data/mahasiswaTemp.txt");
         
         try (BufferedReader reader = Files.newBufferedReader(source);
              BufferedWriter writer = Files.newBufferedWriter(temp)) {
@@ -81,8 +80,8 @@ public class OperatorMahasiswa {
     }
 
     public void hapusMahasiswa(String nim) throws IOException {
-        Path source = Paths.get("dataMahasiswa.txt");
-        Path temp = Paths.get("mahasiswaTemp.txt");
+        Path source = Paths.get("data/dataMahasiswa.txt");
+        Path temp = Paths.get("data/mahasiswaTemp.txt");
         
         try (BufferedReader reader = Files.newBufferedReader(source);
              BufferedWriter writer = Files.newBufferedWriter(temp)) {

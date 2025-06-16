@@ -1,8 +1,3 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,6 +6,11 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class HalamanAktivitasMahasiswa extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
@@ -120,7 +120,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         pinjamBtn.addActionListener(e -> pinjam());
         listBtn.addActionListener(e -> {
             StringBuilder daftarBuku = new StringBuilder("=== Daftar Buku Tersedia ===\n\n");
-            File file = new File("dataBuku.txt");
+            File file = new File("data/dataBuku.txt");
             boolean adaBuku = false;
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
@@ -238,7 +238,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         });
         listBtn.addActionListener(e -> {
             StringBuilder daftarPinjaman = new StringBuilder("=== Buku yang Anda Pinjam ===\n\n");
-            File file = new File("dataPinjam.txt");
+            File file = new File("data/dataPinjam.txt");
             boolean adaPinjaman = false;
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
@@ -445,7 +445,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
     }
     private String findPinjamanRecord(String nim, String kodeBuku) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -471,7 +471,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
     }
     private boolean checkHasBorrowedBooks(String nim) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith(nim + ";")) {
@@ -520,7 +520,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     //tampilkan tabel
     public void tampilkanTabelSemuaPinjaman() {
         tabelModelPinjam.setRowCount(0);
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -531,7 +531,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     }
     public void tampilkanTabelPinjamanMahasiswa() {
         tabelModelKembali.setRowCount(0);
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");

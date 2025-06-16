@@ -12,8 +12,8 @@ public class Perpustakaan {
     ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
 
-    private final Path fileBuku = Paths.get("dataBuku.txt");
-    private final Path filePinjam = Paths.get("dataPinjam.txt");
+    private final Path fileBuku = Paths.get("data/dataBuku.txt");
+    private final Path filePinjam = Paths.get("data/dataPinjam.txt");
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Perpustakaan {
     }
 
     public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -64,7 +64,7 @@ public class Perpustakaan {
     }
 
     public void hapusBuku(String kode) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -88,7 +88,7 @@ public class Perpustakaan {
 
     //Method untuk Pinjam Buku
     public void kurangiStokBuku(String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
         boolean stokHabis = false;
 
@@ -130,7 +130,7 @@ public class Perpustakaan {
     
     //Method untuk kembaliin buku
     public void tambahStokBuku(String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -157,7 +157,7 @@ public class Perpustakaan {
     }
 
     public void kembalikanBuku(String nim, String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("pinjamTemp.txt");
+        Path tempFile = Paths.get("data/pinjamTemp.txt");
         boolean bukuDipinjamDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(filePinjam);

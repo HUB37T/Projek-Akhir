@@ -11,7 +11,7 @@ public class Buku {
     private String judulBuku;
     private TreeSet<String> Pengarang;
     private int jumlah;
-    File bukuFile = new File("dataBuku.txt");
+    File bukuFile = new File("data/dataBuku.txt");
 
     public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang, int jumlah) {
         this.kodeBuku = kodeBuku;
