@@ -34,9 +34,9 @@ public class MahasiswaSignUpPage extends JFrame {
 
     private void initComponents() {
         operatorMahasiswa = new OperatorMahasiswa();
-        nimField = new CustomTextField("nim_icon.png");
-        nameField = new CustomTextField("user_icon.png");
-        prodiField = new CustomTextField("prodi_icon.png");
+        nimField = new CustomTextField("assets/icons/nim_icon.png");
+        nameField = new CustomTextField("assets/icons/user_icon.png");
+        prodiField = new CustomTextField("assets/icons/prodi_icon.png");
 
         passwordField = new JPasswordField();
         stylePasswordField(passwordField);
@@ -58,7 +58,7 @@ public class MahasiswaSignUpPage extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // --- HEADER ---
-        ImageIcon headerIcon = new ImageIcon(new ImageIcon("signup_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("assets/icons/signup_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
         JLabel iconLabel = new JLabel(headerIcon);
         gbc.gridy = 0;
         gbc.gridwidth = 2;

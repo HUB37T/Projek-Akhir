@@ -35,8 +35,8 @@ public class AdminLogIn extends JFrame {
     private void initComponents() {
         operatorAdmin = new OperatorAdmin();
 
-        emailField = new CustomTextField("email_icon.png");
-        nameField = new CustomTextField("user_icon.png");
+        emailField = new CustomTextField("assets/icons/email_icon.png");
+        nameField = new CustomTextField("assets/icons/user_icon.png");
 
         passwordField = new JPasswordField();
         passwordField.setFont(new Font("Lato", Font.PLAIN, 16));
@@ -61,7 +61,7 @@ public class AdminLogIn extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        ImageIcon headerIcon = new ImageIcon(new ImageIcon("admin_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("assets/icons/admin_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
         JLabel iconLabel = new JLabel(headerIcon);
         gbc.gridy = 0;
         gbc.gridwidth = 2;

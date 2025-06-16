@@ -31,7 +31,7 @@ public class Main extends JFrame {
         initComponents();
         setupLayout();
         registerEventListeners();
-        playBackgroundMusic("sound.wav");
+        playBackgroundMusic("assets/sounds/sound.wav");
         startFadeInAnimation();
 
         setFocusable(true);
@@ -101,7 +101,7 @@ public class Main extends JFrame {
     }
 
     private void setupLayout() {
-        BackgroundPanel bgPanel = new BackgroundPanel("Start.jpg");
+        BackgroundPanel bgPanel = new BackgroundPanel("assets/images/Start.jpg");
         bgPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -167,11 +167,11 @@ public class Main extends JFrame {
         clockTimer.start();
 
         adminButton.addActionListener(e -> {
-            playSoundEffect("click.wav");
+            playSoundEffect("assets/sounds/click.wav");
             new AdminPage();
         });
         mahasiswaButton.addActionListener(e -> {
-            playSoundEffect("click.wav");
+            playSoundEffect("assets/sounds/click.wav");
             new MahasiswaPage();
         });
 

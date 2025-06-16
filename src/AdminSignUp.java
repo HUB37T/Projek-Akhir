@@ -36,8 +36,8 @@ public class AdminSignUp extends JFrame {
     private void initComponents() {
         operatorAdmin = new OperatorAdmin();
 
-        nameField = new CustomTextField("user_icon.png");
-        emailField = new CustomTextField("email_icon.png");
+        nameField = new CustomTextField("assets/icons/user_icon.png");
+        emailField = new CustomTextField("assets/icons/email_icon.png");
 
         passwordField = new JPasswordField();
         styleSimplePasswordField(passwordField);
@@ -59,7 +59,7 @@ public class AdminSignUp extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // --- HEADER ---
-        ImageIcon headerIcon = new ImageIcon(new ImageIcon("signup_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("assets/icons/signup_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
         JLabel iconLabel = new JLabel(headerIcon);
         gbc.gridy = 0;
         gbc.gridwidth = 2;

@@ -44,7 +44,7 @@ public class AdminPage extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
 
         try {
-            ImageIcon adminIcon = new ImageIcon(new ImageIcon("admin_icon.png").getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+            ImageIcon adminIcon = new ImageIcon(new ImageIcon("assets/icons/admin_icon.png").getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH));
             JLabel iconLabel = new JLabel(adminIcon);
             gbc.gridx = 0;
             gbc.gridy = 0;

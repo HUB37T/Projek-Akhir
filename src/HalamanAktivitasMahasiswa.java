@@ -81,9 +81,9 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton cariBtn = createStyledButton("Cari Buku", "search_icon.png");
-        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "borrow_icon.png");
-        JButton listBtn = createStyledButton("List Buku Tersedia", "list_icon.png");
+        JButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
+        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
+        JButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldPinjam);
@@ -172,9 +172,9 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         cariFieldKembali.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "return_icon.png");
-        JButton listBtn = createStyledButton("List Buku Dipinjam", "list_icon.png");
-        JButton refreshBtn = createStyledButton("Refresh", "refresh_icon.png");
+        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
+        JButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
+        JButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
@@ -287,7 +287,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         gbc.gridwidth = 2;
         panel.add(titleLabel, gbc);
 
-        JButton editBtn = createStyledButton("Edit Akun", "edit_user_icon.png");
+        JButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
         editBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -300,7 +300,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(editDesc, gbc);
 
-        JButton hapusBtn = createStyledButton("Hapus Akun", "delete_user_icon.png");
+        JButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
         hapusBtn.setBackground(new Color(139, 0, 0));
         hapusBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridx = 0;
@@ -501,7 +501,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
             qrLabel = new JLabel(new ImageIcon(image));
         }
 
-        JButton payButton = createStyledButton("Saya Sudah Bayar", "payment_icon.png");
+        JButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
         payButton.addActionListener(e -> {
             prosesPengembalianBuku(kodeBuku);
             paymentDialog.dispose();
