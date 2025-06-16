@@ -3,10 +3,12 @@ import java.awt.*;
 import javax.sound.sampled.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.awt.event.MouseEvent;
 import java.io.InputStream;
 
 public class Main extends JFrame {
@@ -17,10 +19,10 @@ public class Main extends JFrame {
     private RoundedButton adminButton;
     private RoundedButton mahasiswaButton;
     private JButton exitButton;
-    private JButton muteButton;
     private JLabel clockLabel;
     private JSlider volumeSlider;
     private JLabel volumePercentageLabel;
+    private JLabel volumeIconLabel;
     private int previousVolume = 100;
 
     private Font poppinsRegularFont;
@@ -78,10 +80,6 @@ public class Main extends JFrame {
         styleBottomButton(exitButton, new Color(139, 0, 0));
         exitButton.setToolTipText("Keluar dari aplikasi (ESC)");
 
-        muteButton = new JButton("Mute");
-        styleBottomButton(muteButton, new Color(0, 100, 0));
-        muteButton.setToolTipText("Heningkan atau bunyikan musik latar");
-
         clockLabel = new JLabel("Memuat...");
         clockLabel.setFont(new Font("Lato", Font.PLAIN, 16));
         clockLabel.setForeground(Color.BLACK);
@@ -98,6 +96,13 @@ public class Main extends JFrame {
         volumeSlider.setPaintLabels(false);
         volumeSlider.setPaintTrack(true);
         volumeSlider.setForeground(Color.BLACK);
+
+        volumeIconLabel = new JLabel(new ImageIcon("assets/icons/volume_icon.png"));
+        volumeIconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+        Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+        volumeIconLabel.setIcon(new ImageIcon(image));
+        volumeIconLabel.setToolTipText("Klik untuk mute/unmute suara");
     }
 
     private void setupLayout() {
@@ -133,12 +138,12 @@ public class Main extends JFrame {
 
         JPanel bottomRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 20));
         bottomRightPanel.setOpaque(false);
-        bottomRightPanel.add(muteButton);
         bottomRightPanel.add(exitButton);
 
         JPanel bottomLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         bottomLeftPanel.setOpaque(false);
         bottomLeftPanel.add(clockLabel);
+        bottomLeftPanel.add(volumeIconLabel);
         bottomLeftPanel.add(volumeSlider);
         bottomLeftPanel.add(volumePercentageLabel);
 
@@ -156,11 +161,35 @@ public class Main extends JFrame {
     private void registerEventListeners() {
         exitButton.addActionListener(e -> showExitConfirmation());
 
-        muteButton.addActionListener(e -> toggleMute());
+        volumeIconLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                toggleMute();
+            }
+        });
 
         volumeSlider.addChangeListener(e -> {
-            updateGainFromSlider();
-            volumePercentageLabel.setText(volumeSlider.getValue() + "%");
+            int vol = volumeSlider.getValue();
+            volumePercentageLabel.setText(vol + "%");
+
+            if (gainControl != null) {
+                if (vol == 0) {
+                    gainControl.setValue(gainControl.getMinimum());
+                    isMuted = true;
+                    ImageIcon icon = new ImageIcon("assets/icons/volume_mute.png");
+                    Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                    volumeIconLabel.setIcon(new ImageIcon(image));
+                    backgroundClip.stop();
+                } else {
+                    float gain = (float) (Math.log10(vol / 100f) * 20);
+                    gainControl.setValue(Math.max(gain, gainControl.getMinimum()));
+                    isMuted = false;
+                    ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+                    Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                    volumeIconLabel.setIcon(new ImageIcon(image));
+                    if (!backgroundClip.isRunning()) backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            }
         });
 
         Timer clockTimer = new Timer(1000, e -> updateClock());
@@ -174,7 +203,6 @@ public class Main extends JFrame {
             playSoundEffect("assets/sounds/click.wav");
             new MahasiswaPage();
         });
-
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -242,18 +270,23 @@ public class Main extends JFrame {
     // --- Method untuk Aksi & Logika ---
 
     private void toggleMute() {
-        if (backgroundClip != null) {
+        if (backgroundClip != null && gainControl != null) {
             if (isMuted) {
+                isMuted = false;
+                volumeSlider.setValue(previousVolume > 0 ? previousVolume : 100);
+                ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+                Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                volumeIconLabel.setIcon(new ImageIcon(image));
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
-                muteButton.setText("Mute");
-                volumeSlider.setValue(previousVolume);
             } else {
+                isMuted = true;
                 previousVolume = volumeSlider.getValue();
-                backgroundClip.stop();
-                muteButton.setText("Unmute");
                 volumeSlider.setValue(0);
+                ImageIcon icon = new ImageIcon("assets/icons/volume_mute.png");
+                Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                volumeIconLabel.setIcon(new ImageIcon(image));
+                backgroundClip.stop();
             }
-            isMuted = !isMuted;
         }
     }
 
