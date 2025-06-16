@@ -20,11 +20,12 @@ public class Main extends JFrame {
     private JButton muteButton;
     private JLabel clockLabel;
     private JSlider volumeSlider;
+    private JLabel volumePercentageLabel;
 
     private Font poppinsRegularFont;
 
     public Main() {
-        loadCustomsFonts();
+        loadCustomFonts();
         initFrame();
         initComponents();
         setupLayout();
@@ -38,7 +39,7 @@ public class Main extends JFrame {
 
     // --- (Helper Methods) ---
 
-    private void loadCustomsFonts() {
+    private void loadCustomFonts() {
         try {
             InputStream isPoppinsRegular = getClass().getResourceAsStream("/fonts/Poppin-Story.ttf");
             if (isPoppinsRegular != null) {
@@ -83,6 +84,19 @@ public class Main extends JFrame {
         clockLabel = new JLabel("Memuat...");
         clockLabel.setFont(new Font("Lato", Font.PLAIN, 16));
         clockLabel.setForeground(Color.BLACK);
+
+        volumePercentageLabel = new JLabel("100%");
+        volumePercentageLabel.setFont(new Font("Lato", Font.PLAIN, 16));
+        volumePercentageLabel.setForeground(Color.BLACK);
+
+        volumeSlider = new JSlider(JSlider.HORIZONTAL,0 , 100, 100);
+        volumeSlider.setMajorTickSpacing(25);
+        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider.setFocusable(false);
+        volumeSlider.setPaintTicks(false);
+        volumeSlider.setPaintLabels(false);
+        volumeSlider.setPaintTrack(true);
+        volumeSlider.setForeground(Color.BLACK);
     }
 
     private void setupLayout() {
@@ -124,6 +138,8 @@ public class Main extends JFrame {
         JPanel bottomLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         bottomLeftPanel.setOpaque(false);
         bottomLeftPanel.add(clockLabel);
+        bottomLeftPanel.add(volumeSlider);
+        bottomLeftPanel.add(volumePercentageLabel);
 
         southWrapperPanel.add(bottomLeftPanel, BorderLayout.WEST);
         southWrapperPanel.add(bottomRightPanel, BorderLayout.EAST);
@@ -140,6 +156,11 @@ public class Main extends JFrame {
         exitButton.addActionListener(e -> showExitConfirmation());
 
         muteButton.addActionListener(e -> toggleMute());
+
+        volumeSlider.addChangeListener(e -> {
+            updateGainFromSlider();
+            volumePercentageLabel.setText(volumeSlider.getValue() + "%");
+        });
 
         Timer clockTimer = new Timer(1000, e -> updateClock());
         clockTimer.start();
@@ -171,6 +192,13 @@ public class Main extends JFrame {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
                 backgroundClip = AudioSystem.getClip();
                 backgroundClip.open(audioStream);
+
+
+                if (backgroundClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                    gainControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+                    updateGainFromSlider();
+                }
+
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
             } else {
                 System.err.println("File musik tidak ditemukan: " + filePath);
@@ -217,9 +245,13 @@ public class Main extends JFrame {
             if (isMuted) {
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
                 muteButton.setText("Mute");
+                updateGainFromSlider();
             } else {
                 backgroundClip.stop();
                 muteButton.setText("Unmute");
+                if (gainControl != null) {
+                    gainControl.setValue(gainControl.getMinimum());
+                }
             }
             isMuted = !isMuted;
         }
@@ -259,6 +291,18 @@ public class Main extends JFrame {
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createLineBorder(color.darker()));
+    }
+
+    private void updateGainFromSlider() {
+        if (gainControl != null) {
+            float volume = volumeSlider.getValue() / 100f;
+            if (volume == 0) {
+                gainControl.setValue(gainControl.getMinimum());
+            } else {
+                float gain = (float) (Math.log10(volume) * 20);
+                gainControl.setValue(Math.max(gain, gainControl.getMinimum()));
+            }
+        }
     }
 
     // --- Kelas Internal & Main Method ---
