@@ -21,6 +21,7 @@ public class Main extends JFrame {
     private JLabel clockLabel;
     private JSlider volumeSlider;
     private JLabel volumePercentageLabel;
+    private int previousVolume = 100;
 
     private Font poppinsRegularFont;
 
@@ -245,13 +246,12 @@ public class Main extends JFrame {
             if (isMuted) {
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
                 muteButton.setText("Mute");
-                updateGainFromSlider();
+                volumeSlider.setValue(previousVolume);
             } else {
+                previousVolume = volumeSlider.getValue();
                 backgroundClip.stop();
                 muteButton.setText("Unmute");
-                if (gainControl != null) {
-                    gainControl.setValue(gainControl.getMinimum());
-                }
+                volumeSlider.setValue(0);
             }
             isMuted = !isMuted;
         }
