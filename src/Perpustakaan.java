@@ -165,10 +165,9 @@ public class Perpustakaan {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] parts = currentLine.split(";", -1);
-                // Cek apakah NIM dan Kode Buku cocok, jika ya, jangan tulis baris ini (efeknya menghapus)
                 if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku) && !bukuDipinjamDitemukan) {
                     bukuDipinjamDitemukan = true;
-                    continue; // Lewati baris ini
+                    continue;
                 }
                 writer.write(currentLine);
                 writer.newLine();
