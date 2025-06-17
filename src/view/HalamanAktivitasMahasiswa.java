@@ -30,6 +30,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
 
     public HalamanAktivitasMahasiswa() {
         initFrame();
+        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 

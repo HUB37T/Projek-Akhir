@@ -242,8 +242,6 @@ public class Main extends JFrame {
         }
     }
 
-
-
     private void playSoundEffect(String filePath) {
         try {
             File audioFile = new File(filePath);
@@ -301,8 +299,10 @@ public class Main extends JFrame {
     }
 
     private void showExitConfirmation() {
+        JDialog exitDialog = new JDialog();
+        exitDialog.setAlwaysOnTop(true);
         int response = JOptionPane.showConfirmDialog(
-                this,
+                exitDialog,
                 "Apakah Anda yakin ingin keluar?",
                 "Konfirmasi Keluar",
                 JOptionPane.YES_NO_OPTION,

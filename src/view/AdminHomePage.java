@@ -33,6 +33,7 @@ public class AdminHomePage extends JFrame {
 
     public AdminHomePage() {
         initFrame();
+        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 

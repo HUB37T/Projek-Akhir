@@ -24,6 +24,7 @@ public class MahasiswaSignInPage extends JFrame {
         registerEventListeners();
 
         setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initFrame() {

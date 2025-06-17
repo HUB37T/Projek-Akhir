@@ -13,6 +13,7 @@ public class MahasiswaPage extends JFrame {
         setupLayout();
         registerEventListeners();
 
+        setAlwaysOnTop(true);
         setVisible(true);
     }
 

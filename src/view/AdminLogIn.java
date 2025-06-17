@@ -24,6 +24,7 @@ public class AdminLogIn extends JFrame {
         registerEventListeners();
 
         setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initFrame() {
