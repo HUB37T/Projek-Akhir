@@ -51,7 +51,7 @@ public class AdminHomePage extends JFrame {
     }
 
     private void initFrame() {
-        setTitle("Halaman Utama Admin - main.Perpustakaan");
+        setTitle("Halaman Utama Admin - Perpustakaan");
         setSize(950, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -77,6 +77,7 @@ public class AdminHomePage extends JFrame {
         JPanel panelBuku = new JPanel(new BorderLayout(10, 10));
         panelBuku.setOpaque(false);
         panelBuku.setBorder(new EmptyBorder(10, 10, 10, 10));
+
 
         panelBuku.add(createBukuFormPanel(), BorderLayout.WEST);
         panelBuku.add(createBukuTablePanel(), BorderLayout.CENTER);
@@ -173,8 +174,12 @@ public class AdminHomePage extends JFrame {
         tableBuku = new JTable(modelBuku);
         styleTable(tableBuku);
 
+        JScrollPane tableScroll = new JScrollPane(tableBuku);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
         tablePanel.add(topButtonPanel, BorderLayout.NORTH);
-        tablePanel.add(new JScrollPane(tableBuku), BorderLayout.CENTER);
+        tablePanel.add(tableScroll, BorderLayout.CENTER);
 
         btnSearch.addActionListener(e -> {
             try {
@@ -227,11 +232,15 @@ public class AdminHomePage extends JFrame {
         tableTransaksi = new JTable(modelTransaksi);
         styleTable(tableTransaksi);
 
+        JScrollPane tableScroll = new JScrollPane(tableTransaksi);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
         sorterTransaksi = new TableRowSorter<>(modelTransaksi);
         tableTransaksi.setRowSorter(sorterTransaksi);
 
         panelTransaksi.add(topPanel, BorderLayout.NORTH);
-        panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
+        panelTransaksi.add(tableScroll, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> tampilkanTabelPinjam());
         btnCari.addActionListener(e -> {
@@ -336,7 +345,7 @@ public class AdminHomePage extends JFrame {
             try {
                 perpustakaan.simpanBuku(kode, judul, pengarangSet, jumlahBuku);
                 JOptionPane.showMessageDialog(null, "Buku berhasil disimpan!");
-                tampilkanTabelBuku(); // Refresh tabel
+                tampilkanTabelBuku();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Gagal menyimpan buku ke file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -400,7 +409,7 @@ public class AdminHomePage extends JFrame {
             try {
                 perpustakaan.editBuku(kode, judul, pengarangSet, jumlahBuku);
                 JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
-                tampilkanTabelBuku(); // Refresh tabel setelah berhasil disimpan
+                tampilkanTabelBuku();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Gagal menyimpan buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
