@@ -1,3 +1,7 @@
+package main;
+import models.Buku;
+import models.Mahasiswa;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,7 +61,7 @@ public class Perpustakaan {
             }
         }
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kode + " tidak ditemukan.");
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
@@ -80,12 +84,12 @@ public class Perpustakaan {
             }
         }
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kode + " tidak ditemukan.");
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    //Method untuk Pinjam Buku
+    //Method untuk Pinjam model.Buku
     public void kurangiStokBuku(String kodeBuku) throws Exception {
         Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
@@ -114,7 +118,7 @@ public class Perpustakaan {
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kodeBuku + " tidak ditemukan.");
         if (stokHabis) throw new Exception("Stok buku sudah habis.");
     }
 
@@ -150,7 +154,7 @@ public class Perpustakaan {
 
         if (!bukuDitemukan) {
             Files.deleteIfExists(tempFile);
-            throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan untuk penambahan stok.");
+            throw new Exception("model.Buku dengan kode " + kodeBuku + " tidak ditemukan untuk penambahan stok.");
         }
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }

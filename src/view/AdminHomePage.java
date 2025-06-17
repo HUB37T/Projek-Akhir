@@ -1,3 +1,6 @@
+package view;
+import main.Perpustakaan;
+
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -47,7 +50,7 @@ public class AdminHomePage extends JFrame {
     }
 
     private void initFrame() {
-        setTitle("Halaman Utama Admin - Perpustakaan");
+        setTitle("Halaman Utama Admin - main.Perpustakaan");
         setSize(950, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

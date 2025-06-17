@@ -1,7 +1,9 @@
+package view;
+
 import javax.swing.*;
 import java.awt.*;
 
-class RoundedButton extends JButton {
+public class RoundedButton extends JButton {
     private Color originalBackgroundColor;
     private Color hoverBackgroundColor;
 

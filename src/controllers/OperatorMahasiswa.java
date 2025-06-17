@@ -1,3 +1,6 @@
+package controllers;
+import models.Mahasiswa;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -73,7 +76,7 @@ public class OperatorMahasiswa {
                 }
             }
             if (!found) {
-                throw new IOException("Mahasiswa dengan NIM " + oldNim + " tidak ditemukan.");
+                throw new IOException("model.Mahasiswa dengan NIM " + oldNim + " tidak ditemukan.");
             }
         }
         Files.move(temp, source, StandardCopyOption.REPLACE_EXISTING);
@@ -95,7 +98,7 @@ public class OperatorMahasiswa {
                 writer.write(currentLine + System.lineSeparator());
             }
             if (!found) {
-                throw new IOException("Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
+                throw new IOException("model.Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
             }
         }
         Files.move(temp, source, StandardCopyOption.REPLACE_EXISTING);

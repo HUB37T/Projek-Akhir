@@ -1,3 +1,8 @@
+package main;
+import view.RoundedButton;
+import view.AdminPage;
+import view.MahasiswaPage;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.sound.sampled.*;
@@ -61,7 +66,7 @@ public class Main extends JFrame {
     }
 
     private void initFrame() {
-        setTitle("Sistem Perpustakaan - Selamat Datang");
+        setTitle("Sistem main.Perpustakaan - Selamat Datang");
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -196,7 +201,7 @@ public class Main extends JFrame {
         clockTimer.start();
 
         adminButton.addActionListener(e -> {
-            playSoundEffect("assets/sounds/click.wav");
+            playSoundEffect("assets/sounds/click.wav");;
             new AdminPage();
         });
         mahasiswaButton.addActionListener(e -> {
@@ -338,7 +343,7 @@ public class Main extends JFrame {
         }
     }
 
-    // --- Kelas Internal & Main Method ---
+    // --- Kelas Internal & main.Main Method ---
 
     class BackgroundPanel extends JPanel {
 
