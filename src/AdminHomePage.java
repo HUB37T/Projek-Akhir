@@ -184,6 +184,7 @@ public class AdminHomePage extends JFrame {
         return tablePanel;
     }
 
+    //Tab transaksi mahasiswa
     private JPanel createTransaksiPanel() {
         JPanel panelTransaksi = new JPanel(new BorderLayout(10, 10));
         panelTransaksi.setOpaque(false);
