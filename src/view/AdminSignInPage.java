@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AdminLogIn extends JFrame {
+public class AdminSignInPage extends JFrame {
 
     private OperatorAdmin operatorAdmin;
     private CustomTextField emailField;
@@ -17,7 +17,7 @@ public class AdminLogIn extends JFrame {
     private RoundedButton loginButton;
     private JLabel signupLabel;
 
-    public AdminLogIn() {
+    public AdminSignInPage() {
         initFrame();
         initComponents();
         setupLayout();
@@ -113,7 +113,7 @@ public class AdminLogIn extends JFrame {
         signupLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AdminSignUp();
+                new AdminSignUpPage();
                 dispose();
             }
         });
@@ -165,7 +165,7 @@ public class AdminLogIn extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminLogIn::new);
+        SwingUtilities.invokeLater(AdminSignInPage::new);
     }
 }
 

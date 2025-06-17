@@ -9,7 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.regex.Pattern;
 
-public class AdminSignUp extends JFrame {
+public class AdminSignUpPage extends JFrame {
 
     private OperatorAdmin operatorAdmin;
     private CustomTextField emailField;
@@ -19,7 +19,7 @@ public class AdminSignUp extends JFrame {
     private RoundedButton signupButton;
     private JLabel loginLabel;
 
-    public AdminSignUp() {
+    public AdminSignUpPage() {
         initFrame();
         initComponents();
         setupLayout();
@@ -205,6 +205,6 @@ public class AdminSignUp extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminSignUp::new);
+        SwingUtilities.invokeLater(AdminSignUpPage::new);
     }
 }

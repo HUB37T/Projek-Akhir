@@ -116,7 +116,7 @@ public class MahasiswaSignInPage extends JFrame {
             } else {
                 try {
                     if (operator.cekMahasiswa(nim, nama, password, prodi)) {
-                        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa());
+                        SwingUtilities.invokeLater(() -> new MahasiswaHomePage());
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(this, "Data tidak cocok atau mahasiswa belum terdaftar.", "Gagal Login", JOptionPane.ERROR_MESSAGE);

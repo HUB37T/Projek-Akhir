@@ -138,7 +138,7 @@ public class MahasiswaSignUpPage extends JFrame {
             try {
                 operatorMahasiswa.daftarMahasiswa(nim, nama, password, prodi);
                 JOptionPane.showMessageDialog(this, "Mahasiswa berhasil terdaftar! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                new HalamanAktivitasMahasiswa();
+                new MahasiswaHomePage();
                 dispose();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Gagal mendaftar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
