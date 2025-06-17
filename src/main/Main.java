@@ -164,6 +164,9 @@ public class Main extends JFrame {
     }
 
     private void registerEventListeners() {
+        addHoverEffect(adminButton, 140, 40, 150, 45, 15f, 17f);
+        addHoverEffect(mahasiswaButton, 140, 40, 150, 45, 15f, 17f);
+
         exitButton.addActionListener(e -> showExitConfirmation());
 
         volumeIconLabel.addMouseListener(new MouseAdapter() {
@@ -215,6 +218,28 @@ public class Main extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     showExitConfirmation();
                 }
+            }
+        });
+    }
+
+    // Method untuk hover Button
+    private void addHoverEffect(RoundedButton selectedButton, int originalWidth, int originalHeight, int hoverWidth, int hoverHeight, float originalFontSize, float hoverFontSize) {
+        Dimension originalSize = new Dimension(originalWidth, originalHeight);
+        Dimension hoverSize = new Dimension(hoverWidth, hoverHeight);
+
+        selectedButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                selectedButton.setPreferredSize(hoverSize);
+                selectedButton.setFont(selectedButton.getFont().deriveFont(hoverFontSize));
+                selectedButton.revalidate();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                selectedButton.setPreferredSize(originalSize);
+                selectedButton.setFont(selectedButton.getFont().deriveFont(originalFontSize));
+                selectedButton.revalidate();
             }
         });
     }
