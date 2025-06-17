@@ -170,7 +170,12 @@ public class AdminHomePage extends JFrame {
         topButtonPanel.add(btnSearch);
         topButtonPanel.add(refresh);
 
-        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0);
+        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
         tableBuku = new JTable(modelBuku);
         styleTable(tableBuku);
 
@@ -227,6 +232,11 @@ public class AdminHomePage extends JFrame {
             public Class<?> getColumnClass(int columnIndex) {
                 if (columnIndex == 3) { return LocalDate.class; }
                 return Object.class;
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
             }
         };
         tableTransaksi = new JTable(modelTransaksi);

@@ -97,7 +97,12 @@ public class MahasiswaHomePage extends JFrame {
         topPanel.add(listBtn);
 
         // Tabel semua pinjaman
-        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
         tabelPinjam = new JTable(tabelModelPinjam);
         styleTable(tabelPinjam);
         JScrollPane tableScroll = new JScrollPane(tabelPinjam);
@@ -188,7 +193,12 @@ public class MahasiswaHomePage extends JFrame {
         topPanel.add(refreshBtn);
 
         //tabel
-        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tabelKembali = new JTable(tabelModelKembali);
         styleTable(tabelKembali);
         JScrollPane tableScroll = new JScrollPane(tabelKembali);
