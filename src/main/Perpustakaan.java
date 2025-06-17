@@ -1,6 +1,5 @@
 package main;
 import models.Buku;
-import models.Mahasiswa;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,7 +11,6 @@ import java.util.*;
 
 public class Perpustakaan {
     ArrayList<Buku> listBuku;
-    ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
 
     private final Path fileBuku = Paths.get("data/dataBuku.txt");
@@ -20,7 +18,6 @@ public class Perpustakaan {
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
-        listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
 
