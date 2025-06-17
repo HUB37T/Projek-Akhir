@@ -164,8 +164,8 @@ public class Main extends JFrame {
     }
 
     private void registerEventListeners() {
-        addHoverEffect(adminButton, 140, 40, 150, 45, 15f, 17f);
-        addHoverEffect(mahasiswaButton, 140, 40, 150, 45, 15f, 17f);
+        addHoverEffect(adminButton, 140, 40, 150, 45, 15f, 20f);
+        addHoverEffect(mahasiswaButton, 140, 40, 150, 45, 15f, 20f);
 
         exitButton.addActionListener(e -> showExitConfirmation());
 
