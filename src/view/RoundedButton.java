@@ -2,6 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 public class RoundedButton extends JButton {
     private Color originalBackgroundColor;
@@ -14,20 +16,17 @@ public class RoundedButton extends JButton {
         setFocusPainted(false);
         setBorderPainted(false);
 
-        addMouseListener(new java.awt.event.MouseAdapter() {
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-
+            public void mouseEntered(MouseEvent e) {
                 if (hoverBackgroundColor != null) {
-                    originalBackgroundColor = getBackground();
-                    setBackground(hoverBackgroundColor);
+                    RoundedButton.super.setBackground(hoverBackgroundColor);
                 }
             }
 
             @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-
-                setBackground(originalBackgroundColor);
+            public void mouseExited(MouseEvent e) {
+                RoundedButton.super.setBackground(originalBackgroundColor);
             }
         });
     }
@@ -35,8 +34,8 @@ public class RoundedButton extends JButton {
     @Override
     public void setBackground(Color bg) {
         super.setBackground(bg);
-        originalBackgroundColor = bg;
-        hoverBackgroundColor = (bg != null) ? bg.brighter() : null;
+        this.originalBackgroundColor = bg;
+        this.hoverBackgroundColor = bg.darker();
     }
 
     @Override

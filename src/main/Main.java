@@ -207,6 +207,7 @@ public class Main extends JFrame {
             playSoundEffect("assets/sounds/click.wav");;
             new AdminPage();
         });
+
         mahasiswaButton.addActionListener(e -> {
             playSoundEffect("assets/sounds/click.wav");
             new MahasiswaPage();
@@ -222,7 +223,8 @@ public class Main extends JFrame {
         });
     }
 
-    // Method untuk hover Button
+    // --- Method untuk hover Button ---
+
     private void addHoverEffect(RoundedButton selectedButton, int originalWidth, int originalHeight, int hoverWidth, int hoverHeight, float originalFontSize, float hoverFontSize) {
         Dimension originalSize = new Dimension(originalWidth, originalHeight);
         Dimension hoverSize = new Dimension(hoverWidth, hoverHeight);
@@ -251,7 +253,6 @@ public class Main extends JFrame {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
                 backgroundClip = AudioSystem.getClip();
                 backgroundClip.open(audioStream);
-
 
                 if (backgroundClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
                     gainControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);

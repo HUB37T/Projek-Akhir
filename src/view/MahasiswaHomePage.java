@@ -96,7 +96,8 @@ public class MahasiswaHomePage extends JFrame {
         topPanel.add(pinjamBtn);
         topPanel.add(listBtn);
 
-        // Tabel semua pinjaman
+        // --- Tabel semua pinjaman ---
+
         tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column){
@@ -165,6 +166,7 @@ public class MahasiswaHomePage extends JFrame {
     }
 
     // --- TAB 2: PENGEMBALIAN BUKU ---
+
     private JPanel createPengembalianBukuTab() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setOpaque(false);
@@ -289,6 +291,7 @@ public class MahasiswaHomePage extends JFrame {
     }
 
     // --- TAB 3: MANAJEMEN AKUN ---
+
     private JPanel createManajemenAkunTab() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -309,7 +312,7 @@ public class MahasiswaHomePage extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(editBtn, gbc);
 
-        JLabel editDesc = new JLabel("<html>Perbarui nama, password, atau prodi Anda.</html>");
+        JLabel editDesc = new JLabel("Perbarui nama, password, atau prodi Anda.");
         editDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -323,7 +326,7 @@ public class MahasiswaHomePage extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(hapusBtn, gbc);
 
-        JLabel hapusDesc = new JLabel("<html>Hapus akun Anda secara permanen dari sistem.</html>");
+        JLabel hapusDesc = new JLabel("Hapus akun Anda secara permanen dari sistem.");
         hapusDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
