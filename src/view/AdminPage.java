@@ -73,12 +73,12 @@ public class AdminPage extends JFrame {
 
     private void registerEventListeners() {
         loginButton.addActionListener(e -> {
-            new AdminLogIn();
+            new AdminSignInPage();
             this.dispose();
         });
 
         signupButton.addActionListener(e -> {
-            new AdminSignUp();
+            new AdminSignUpPage();
             this.dispose();
         });
     }
