@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class HalamanAktivitasMahasiswa extends JFrame {
+public class MahasiswaHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
     private String nim = OperatorMahasiswa.nimLog;
     private String nama = OperatorMahasiswa.namaLog;
@@ -28,7 +28,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     private JTable tabelKembali;
     private JTable tabelPinjam;
 
-    public HalamanAktivitasMahasiswa() {
+    public MahasiswaHomePage() {
         initFrame();
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
@@ -560,6 +560,6 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     public static void main(String[] args) {
         OperatorMahasiswa.nimLog = "000";
         OperatorMahasiswa.namaLog = "Guest";
-        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
+        SwingUtilities.invokeLater(() -> new MahasiswaHomePage().setVisible(true));
     }
 }
