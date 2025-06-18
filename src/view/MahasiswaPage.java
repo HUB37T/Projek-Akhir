@@ -1,9 +1,7 @@
+package view;
 
-import javax.swing.*;
 import java.awt.*;
-
 import javax.swing.*;
-import java.awt.*;
 
 public class MahasiswaPage extends JFrame {
     private RoundedButton signInButton;
@@ -15,6 +13,7 @@ public class MahasiswaPage extends JFrame {
         setupLayout();
         registerEventListeners();
 
+        setAlwaysOnTop(true);
         setVisible(true);
     }
 
@@ -29,10 +28,10 @@ public class MahasiswaPage extends JFrame {
 
     private void initComponents() {
         signInButton = new RoundedButton("Sign In");
-        styleButton(signInButton, "login_icon.png");
+        styleButton(signInButton, "assets/icons/login_icon.png");
 
         signUpButton = new RoundedButton("Sign Up");
-        styleButton(signUpButton, "signup_icon.png");
+        styleButton(signUpButton, "assets/icons/signup_icon.png");
     }
 
     private void setupLayout() {
@@ -44,7 +43,7 @@ public class MahasiswaPage extends JFrame {
 
         // --- HEADER ---
         try {
-            ImageIcon portalIcon = new ImageIcon(new ImageIcon("student_portal_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+            ImageIcon portalIcon = new ImageIcon(new ImageIcon("assets/icons/student_portal_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
             JLabel iconLabel = new JLabel(portalIcon);
             gbc.gridy = 0;
             mainPanel.add(iconLabel, gbc);

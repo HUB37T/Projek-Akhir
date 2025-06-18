@@ -1,18 +1,19 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.*;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
+package view;
+import main.Perpustakaan;
+import controllers.OperatorMahasiswa;
 
-public class HalamanAktivitasMahasiswa extends JFrame {
+import java.io.*;
+import java.awt.*;
+import java.text.*;
+import java.time.*;
+import java.util.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.table.*;
+import java.time.temporal.*;
+import javax.swing.border.*;
+
+public class MahasiswaHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
     private String nim = OperatorMahasiswa.nimLog;
     private String nama = OperatorMahasiswa.namaLog;
@@ -24,8 +25,9 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     private JTable tabelKembali;
     private JTable tabelPinjam;
 
-    public HalamanAktivitasMahasiswa() {
+    public MahasiswaHomePage() {
         initFrame();
+        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 
@@ -81,9 +83,9 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton cariBtn = createStyledButton("Cari Buku", "search_icon.png");
-        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "borrow_icon.png");
-        JButton listBtn = createStyledButton("List Buku Tersedia", "list_icon.png");
+        RoundedButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
+        RoundedButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
+        RoundedButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldPinjam);
@@ -91,8 +93,14 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         topPanel.add(pinjamBtn);
         topPanel.add(listBtn);
 
-        // Tabel semua pinjaman
-        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        // --- Tabel semua pinjaman ---
+
+        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
         tabelPinjam = new JTable(tabelModelPinjam);
         styleTable(tabelPinjam);
         JScrollPane tableScroll = new JScrollPane(tabelPinjam);
@@ -120,7 +128,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         pinjamBtn.addActionListener(e -> pinjam());
         listBtn.addActionListener(e -> {
             StringBuilder daftarBuku = new StringBuilder("=== Daftar Buku Tersedia ===\n\n");
-            File file = new File("dataBuku.txt");
+            File file = new File("data/dataBuku.txt");
             boolean adaBuku = false;
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
@@ -155,6 +163,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     }
 
     // --- TAB 2: PENGEMBALIAN BUKU ---
+
     private JPanel createPengembalianBukuTab() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setOpaque(false);
@@ -172,9 +181,9 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         cariFieldKembali.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "return_icon.png");
-        JButton listBtn = createStyledButton("List Buku Dipinjam", "list_icon.png");
-        JButton refreshBtn = createStyledButton("Refresh", "refresh_icon.png");
+        RoundedButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
+        RoundedButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
+        RoundedButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
@@ -183,7 +192,12 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         topPanel.add(refreshBtn);
 
         //tabel
-        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0);
+        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tabelKembali = new JTable(tabelModelKembali);
         styleTable(tabelKembali);
         JScrollPane tableScroll = new JScrollPane(tabelKembali);
@@ -238,7 +252,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         });
         listBtn.addActionListener(e -> {
             StringBuilder daftarPinjaman = new StringBuilder("=== Buku yang Anda Pinjam ===\n\n");
-            File file = new File("dataPinjam.txt");
+            File file = new File("data/dataPinjam.txt");
             boolean adaPinjaman = false;
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
@@ -274,6 +288,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     }
 
     // --- TAB 3: MANAJEMEN AKUN ---
+
     private JPanel createManajemenAkunTab() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -287,20 +302,20 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         gbc.gridwidth = 2;
         panel.add(titleLabel, gbc);
 
-        JButton editBtn = createStyledButton("Edit Akun", "edit_user_icon.png");
+        RoundedButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
         editBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(editBtn, gbc);
 
-        JLabel editDesc = new JLabel("<html>Perbarui nama, password, atau prodi Anda.</html>");
+        JLabel editDesc = new JLabel("Perbarui nama, password, atau prodi Anda.");
         editDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(editDesc, gbc);
 
-        JButton hapusBtn = createStyledButton("Hapus Akun", "delete_user_icon.png");
+        RoundedButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
         hapusBtn.setBackground(new Color(139, 0, 0));
         hapusBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridx = 0;
@@ -308,7 +323,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(hapusBtn, gbc);
 
-        JLabel hapusDesc = new JLabel("<html>Hapus akun Anda secara permanen dari sistem.</html>");
+        JLabel hapusDesc = new JLabel("Hapus akun Anda secara permanen dari sistem.");
         hapusDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -406,7 +421,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         label.setForeground(Color.WHITE);
         return label;
     }
-    private JButton createStyledButton(String text, String iconPath) {
+    private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
@@ -445,7 +460,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
     }
     private String findPinjamanRecord(String nim, String kodeBuku) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -471,7 +486,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
         }
     }
     private boolean checkHasBorrowedBooks(String nim) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith(nim + ";")) {
@@ -501,7 +516,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
             qrLabel = new JLabel(new ImageIcon(image));
         }
 
-        JButton payButton = createStyledButton("Saya Sudah Bayar", "payment_icon.png");
+        RoundedButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
         payButton.addActionListener(e -> {
             prosesPengembalianBuku(kodeBuku);
             paymentDialog.dispose();
@@ -520,7 +535,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     //tampilkan tabel
     public void tampilkanTabelSemuaPinjaman() {
         tabelModelPinjam.setRowCount(0);
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -531,7 +546,7 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     }
     public void tampilkanTabelPinjamanMahasiswa() {
         tabelModelKembali.setRowCount(0);
-        try (BufferedReader br = new BufferedReader(new FileReader("dataPinjam.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -546,6 +561,6 @@ public class HalamanAktivitasMahasiswa extends JFrame {
     public static void main(String[] args) {
         OperatorMahasiswa.nimLog = "000";
         OperatorMahasiswa.namaLog = "Guest";
-        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
+        SwingUtilities.invokeLater(() -> new MahasiswaHomePage().setVisible(true));
     }
 }

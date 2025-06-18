@@ -1,9 +1,9 @@
+package controllers;
 
 import java.io.*;
-import java.util.*;
+
 public class OperatorAdmin {
-    List<Admin> adminList;
-    File adminFile = new File("dataAdmin.txt");
+    File adminFile = new File("data/dataAdmin.txt");
     public boolean cekAdmin(String email, String nama, String password) throws Exception {
         try{
             FileReader fr = new FileReader(adminFile);
@@ -23,7 +23,7 @@ public class OperatorAdmin {
     public void daftarAdmin(String email, String nama, String password) throws Exception {
         try{
             if(cekAdmin(email, nama, password)){
-                throw new Exception("Admin sudah terdaftar!");
+                throw new Exception("model.Admin sudah terdaftar!");
             }else {
                 FileWriter fw = new FileWriter(adminFile, true);
                 BufferedWriter bw = new BufferedWriter(fw);

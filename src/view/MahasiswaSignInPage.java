@@ -1,8 +1,11 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+package view;
+import util.CustomTextField;
+import controllers.OperatorMahasiswa;
+
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.border.*;
 
 public class MahasiswaSignInPage extends JFrame {
     private OperatorMahasiswa operator;
@@ -20,6 +23,7 @@ public class MahasiswaSignInPage extends JFrame {
         registerEventListeners();
 
         setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initFrame() {
@@ -35,9 +39,9 @@ public class MahasiswaSignInPage extends JFrame {
     private void initComponents() {
         operator = new OperatorMahasiswa();
 
-        nimField = new CustomTextField("nim_icon.png");
-        nameField = new CustomTextField("user_icon.png");
-        prodiField = new CustomTextField("prodi_icon.png");
+        nimField = new CustomTextField("assets/icons/nim_icon.png");
+        nameField = new CustomTextField("assets/icons/user_icon.png");
+        prodiField = new CustomTextField("assets/icons/prodi_icon.png");
 
         passwordField = new JPasswordField();
         stylePasswordField(passwordField);
@@ -56,7 +60,7 @@ public class MahasiswaSignInPage extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // --- HEADER ---
-        ImageIcon headerIcon = new ImageIcon(new ImageIcon("student_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("assets/icons/student_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
         JLabel iconLabel = new JLabel(headerIcon);
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -111,7 +115,7 @@ public class MahasiswaSignInPage extends JFrame {
             } else {
                 try {
                     if (operator.cekMahasiswa(nim, nama, password, prodi)) {
-                        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa());
+                        SwingUtilities.invokeLater(() -> new MahasiswaHomePage());
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(this, "Data tidak cocok atau mahasiswa belum terdaftar.", "Gagal Login", JOptionPane.ERROR_MESSAGE);

@@ -1,8 +1,10 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+package util;
 
-class CustomTextField extends JPanel {
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class CustomTextField extends JPanel {
     private JTextField textField;
 
     public CustomTextField(String iconPath) {

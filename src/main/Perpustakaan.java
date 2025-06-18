@@ -1,23 +1,20 @@
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
-import java.util.*;
+package main;
+import models.Buku;
 
+import java.io.*;
+import java.time.*;
+import java.util.*;
+import java.nio.file.*;
 
 public class Perpustakaan {
     ArrayList<Buku> listBuku;
-    ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
 
-    private final Path fileBuku = Paths.get("dataBuku.txt");
-    private final Path filePinjam = Paths.get("dataPinjam.txt");
+    private final Path fileBuku = Paths.get("data/dataBuku.txt");
+    private final Path filePinjam = Paths.get("data/dataPinjam.txt");
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
-        listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
 
@@ -39,7 +36,7 @@ public class Perpustakaan {
     }
 
     public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -58,13 +55,13 @@ public class Perpustakaan {
             }
         }
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kode + " tidak ditemukan.");
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public void hapusBuku(String kode) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -81,14 +78,14 @@ public class Perpustakaan {
             }
         }
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kode + " tidak ditemukan.");
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    //Method untuk Pinjam Buku
+    //Method untuk Pinjam model.Buku
     public void kurangiStokBuku(String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
         boolean stokHabis = false;
 
@@ -115,7 +112,7 @@ public class Perpustakaan {
 
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
 
-        if (!bukuDitemukan) throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan.");
+        if (!bukuDitemukan) throw new Exception("model.Buku dengan kode " + kodeBuku + " tidak ditemukan.");
         if (stokHabis) throw new Exception("Stok buku sudah habis.");
     }
 
@@ -130,7 +127,7 @@ public class Perpustakaan {
     
     //Method untuk kembaliin buku
     public void tambahStokBuku(String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("bukuTemp.txt");
+        Path tempFile = Paths.get("data/bukuTemp.txt");
         boolean bukuDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(fileBuku);
@@ -151,13 +148,13 @@ public class Perpustakaan {
 
         if (!bukuDitemukan) {
             Files.deleteIfExists(tempFile);
-            throw new Exception("Buku dengan kode " + kodeBuku + " tidak ditemukan untuk penambahan stok.");
+            throw new Exception("model.Buku dengan kode " + kodeBuku + " tidak ditemukan untuk penambahan stok.");
         }
         Files.move(tempFile, fileBuku, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public void kembalikanBuku(String nim, String kodeBuku) throws Exception {
-        Path tempFile = Paths.get("pinjamTemp.txt");
+        Path tempFile = Paths.get("data/pinjamTemp.txt");
         boolean bukuDipinjamDitemukan = false;
 
         try (BufferedReader reader = Files.newBufferedReader(filePinjam);
@@ -165,6 +162,7 @@ public class Perpustakaan {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] parts = currentLine.split(";", -1);
+                // Cek apakah NIM dan Kode Buku cocok, jika ya, jangan tulis baris ini (efeknya menghapus)
                 if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku) && !bukuDipinjamDitemukan) {
                     bukuDipinjamDitemukan = true;
                     continue;

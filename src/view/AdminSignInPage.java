@@ -1,10 +1,13 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+package view;
+import util.CustomTextField;
+import controllers.OperatorAdmin;
 
-public class AdminLogIn extends JFrame {
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.border.*;
+
+public class AdminSignInPage extends JFrame {
 
     private OperatorAdmin operatorAdmin;
     private CustomTextField emailField;
@@ -13,13 +16,14 @@ public class AdminLogIn extends JFrame {
     private RoundedButton loginButton;
     private JLabel signupLabel;
 
-    public AdminLogIn() {
+    public AdminSignInPage() {
         initFrame();
         initComponents();
         setupLayout();
         registerEventListeners();
 
         setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initFrame() {
@@ -35,8 +39,8 @@ public class AdminLogIn extends JFrame {
     private void initComponents() {
         operatorAdmin = new OperatorAdmin();
 
-        emailField = new CustomTextField("email_icon.png");
-        nameField = new CustomTextField("user_icon.png");
+        emailField = new CustomTextField("assets/icons/email_icon.png");
+        nameField = new CustomTextField("assets/icons/user_icon.png");
 
         passwordField = new JPasswordField();
         passwordField.setFont(new Font("Lato", Font.PLAIN, 16));
@@ -61,7 +65,7 @@ public class AdminLogIn extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        ImageIcon headerIcon = new ImageIcon(new ImageIcon("admin_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
+        ImageIcon headerIcon = new ImageIcon(new ImageIcon("assets/icons/admin_login_icon.png").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH));
         JLabel iconLabel = new JLabel(headerIcon);
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -108,7 +112,7 @@ public class AdminLogIn extends JFrame {
         signupLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AdminSignUp();
+                new AdminSignUpPage();
                 dispose();
             }
         });
@@ -160,7 +164,7 @@ public class AdminLogIn extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminLogIn::new);
+        SwingUtilities.invokeLater(AdminSignInPage::new);
     }
 }
 

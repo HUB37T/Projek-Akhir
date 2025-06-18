@@ -1,19 +1,16 @@
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+package view;
+import main.Perpustakaan;
+
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.awt.*;
+import java.time.*;
 import java.util.*;
+import javax.swing.*;
 import java.util.List;
+import java.nio.file.*;
+import java.awt.event.*;
+import javax.swing.table.*;
+import javax.swing.border.*;
 
 public class AdminHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
@@ -30,6 +27,7 @@ public class AdminHomePage extends JFrame {
 
     public AdminHomePage() {
         initFrame();
+        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 
@@ -73,6 +71,7 @@ public class AdminHomePage extends JFrame {
         JPanel panelBuku = new JPanel(new BorderLayout(10, 10));
         panelBuku.setOpaque(false);
         panelBuku.setBorder(new EmptyBorder(10, 10, 10, 10));
+
 
         panelBuku.add(createBukuFormPanel(), BorderLayout.WEST);
         panelBuku.add(createBukuTablePanel(), BorderLayout.CENTER);
@@ -122,9 +121,9 @@ public class AdminHomePage extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setOpaque(false);
 
-        JButton btnAdd = createStyledButton("Add", "add_icon.png");
-        JButton btnEdit = createStyledButton("Edit", "edit_icon.png");
-        JButton btnDelete = createStyledButton("Delete", "delete_icon.png");
+        RoundedButton btnAdd = createStyledButton("Add", "assets/icons/add_icon.png");
+        RoundedButton btnEdit = createStyledButton("Edit", "assets/icons/edit_icon.png");
+        RoundedButton btnDelete = createStyledButton("Delete", "assets/icons/delete_icon.png");
 
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
@@ -160,17 +159,26 @@ public class AdminHomePage extends JFrame {
 
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topButtonPanel.setOpaque(false);
-        JButton btnSearch = createStyledButton("Search", "search_icon.png");
-        JButton refresh = createStyledButton("Refresh", "refresh_icon.png");
+        RoundedButton btnSearch = createStyledButton("Search", "assets/icons/search_icon.png");
+        RoundedButton refresh = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
         topButtonPanel.add(btnSearch);
         topButtonPanel.add(refresh);
 
-        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0);
+        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
         tableBuku = new JTable(modelBuku);
         styleTable(tableBuku);
 
+        JScrollPane tableScroll = new JScrollPane(tableBuku);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
         tablePanel.add(topButtonPanel, BorderLayout.NORTH);
-        tablePanel.add(new JScrollPane(tableBuku), BorderLayout.CENTER);
+        tablePanel.add(tableScroll, BorderLayout.CENTER);
 
         btnSearch.addActionListener(e -> {
             try {
@@ -203,9 +211,9 @@ public class AdminHomePage extends JFrame {
 
         tfCari = createStyledTextField();
         tfCari.setPreferredSize(new Dimension(200, 35));
-        JButton btnCari = createStyledButton("Cari", "search_icon.png");
-        JButton btnSort = createStyledButton("Sort by Day", "sort_icon.png");
-        JButton refreshButton = createStyledButton("Refresh", "refresh_icon.png");
+        RoundedButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
+        RoundedButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
+        RoundedButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Cari NIM:"));
         topPanel.add(tfCari);
@@ -220,15 +228,24 @@ public class AdminHomePage extends JFrame {
                 if (columnIndex == 3) { return LocalDate.class; }
                 return Object.class;
             }
+
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
         };
         tableTransaksi = new JTable(modelTransaksi);
         styleTable(tableTransaksi);
+
+        JScrollPane tableScroll = new JScrollPane(tableTransaksi);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
 
         sorterTransaksi = new TableRowSorter<>(modelTransaksi);
         tableTransaksi.setRowSorter(sorterTransaksi);
 
         panelTransaksi.add(topPanel, BorderLayout.NORTH);
-        panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
+        panelTransaksi.add(tableScroll, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> tampilkanTabelPinjam());
         btnCari.addActionListener(e -> {
@@ -288,7 +305,7 @@ public class AdminHomePage extends JFrame {
         return label;
     }
 
-    private JButton createStyledButton(String text, String iconPath) {
+    private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
@@ -333,7 +350,7 @@ public class AdminHomePage extends JFrame {
             try {
                 perpustakaan.simpanBuku(kode, judul, pengarangSet, jumlahBuku);
                 JOptionPane.showMessageDialog(null, "Buku berhasil disimpan!");
-                tampilkanTabelBuku(); // Refresh tabel
+                tampilkanTabelBuku();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Gagal menyimpan buku ke file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -352,7 +369,7 @@ public class AdminHomePage extends JFrame {
     }
     public void tampilkanTabelBuku() {
         modelBuku.setRowCount(0);
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataBuku.txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("data/dataBuku.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";", -1);
@@ -360,7 +377,7 @@ public class AdminHomePage extends JFrame {
             }
         } catch (IOException e) {
             try {
-                Files.createFile(Paths.get("dataBuku.txt"));
+                Files.createFile(Paths.get("data/dataBuku.txt"));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Gagal membaca file dataBuku.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -397,7 +414,7 @@ public class AdminHomePage extends JFrame {
             try {
                 perpustakaan.editBuku(kode, judul, pengarangSet, jumlahBuku);
                 JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
-                tampilkanTabelBuku(); // Refresh tabel setelah berhasil disimpan
+                tampilkanTabelBuku();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Gagal menyimpan buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -451,7 +468,7 @@ public class AdminHomePage extends JFrame {
             tfCari.setText("");
         }
         modelTransaksi.setRowCount(0);
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("dataPinjam.txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("data/dataPinjam.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";", -1);
@@ -465,7 +482,7 @@ public class AdminHomePage extends JFrame {
             }
         } catch (IOException e) {
             try {
-                Files.createFile(Paths.get("dataPinjam.txt"));
+                Files.createFile(Paths.get("data/dataPinjam.txt"));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Gagal membaca file dataPinjam.txt: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

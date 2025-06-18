@@ -1,30 +1,39 @@
-import javax.swing.*;
+package main;
+import view.RoundedButton;
+import view.AdminPage;
+import view.MahasiswaPage;
+
+import java.io.*;
 import java.awt.*;
+import java.time.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.time.format.*;
 import javax.sound.sampled.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Main extends JFrame {
     private Clip backgroundClip;
     private boolean isMuted = false;
+    private FloatControl gainControl;
 
     private RoundedButton adminButton;
     private RoundedButton mahasiswaButton;
     private JButton exitButton;
-    private JButton muteButton;
     private JLabel clockLabel;
+    private JSlider volumeSlider;
+    private JLabel volumePercentageLabel;
+    private JLabel volumeIconLabel;
+    private int previousVolume = 100;
 
+    private Font poppinsRegularFont;
 
     public Main() {
+        loadCustomFonts();
         initFrame();
         initComponents();
         setupLayout();
         registerEventListeners();
-        playBackgroundMusic("sound.wav");
+        playBackgroundMusic("assets/sounds/sound.wav");
         startFadeInAnimation();
 
         setFocusable(true);
@@ -33,8 +42,26 @@ public class Main extends JFrame {
 
     // --- (Helper Methods) ---
 
+    private void loadCustomFonts() {
+        try {
+            InputStream isPoppinsRegular = getClass().getResourceAsStream("/fonts/Poppin-Story.ttf");
+            if (isPoppinsRegular != null) {
+                poppinsRegularFont = Font.createFont(Font.TRUETYPE_FONT, isPoppinsRegular);
+                isPoppinsRegular.close();
+            } else {
+                System.err.println("Gagal memuat font. Font tidak ditemukan di resource");
+                poppinsRegularFont = new Font("Arial", Font.PLAIN, 16);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat font. Font tidak ditemukan di resource");
+            poppinsRegularFont = new Font("Arial", Font.PLAIN, 16);
+        }
+    }
+
     private void initFrame() {
-        setTitle("Sistem Perpustakaan - Selamat Datang");
+        setTitle("Sistem main.Perpustakaan - Selamat Datang");
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,17 +80,33 @@ public class Main extends JFrame {
         styleBottomButton(exitButton, new Color(139, 0, 0));
         exitButton.setToolTipText("Keluar dari aplikasi (ESC)");
 
-        muteButton = new JButton("Mute");
-        styleBottomButton(muteButton, new Color(0, 100, 0));
-        muteButton.setToolTipText("Heningkan atau bunyikan musik latar");
-
         clockLabel = new JLabel("Memuat...");
         clockLabel.setFont(new Font("Lato", Font.PLAIN, 16));
         clockLabel.setForeground(Color.BLACK);
+
+        volumePercentageLabel = new JLabel("100%");
+        volumePercentageLabel.setFont(new Font("Lato", Font.PLAIN, 16));
+        volumePercentageLabel.setForeground(Color.BLACK);
+
+        volumeSlider = new JSlider(JSlider.HORIZONTAL,0 , 100, 100);
+        volumeSlider.setMajorTickSpacing(25);
+        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider.setFocusable(false);
+        volumeSlider.setPaintTicks(false);
+        volumeSlider.setPaintLabels(false);
+        volumeSlider.setPaintTrack(true);
+        volumeSlider.setForeground(Color.BLACK);
+
+        volumeIconLabel = new JLabel(new ImageIcon("assets/icons/volume_icon.png"));
+        volumeIconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+        Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+        volumeIconLabel.setIcon(new ImageIcon(image));
+        volumeIconLabel.setToolTipText("Klik untuk mute/unmute suara");
     }
 
     private void setupLayout() {
-        BackgroundPanel bgPanel = new BackgroundPanel("Start.jpg");
+        BackgroundPanel bgPanel = new BackgroundPanel("assets/images/Start.jpg");
         bgPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -73,7 +116,7 @@ public class Main extends JFrame {
         welcomeLabel.setOpaque(true);
         welcomeLabel.setBackground(new Color(255, 215, 0, 180));
         welcomeLabel.setForeground(Color.BLACK);
-        welcomeLabel.setFont(new Font("Lato", Font.BOLD, 28));
+        welcomeLabel.setFont(poppinsRegularFont.deriveFont(Font.BOLD, 32));
         welcomeLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(255, 255, 153, 180), 4),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
@@ -95,12 +138,14 @@ public class Main extends JFrame {
 
         JPanel bottomRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 20));
         bottomRightPanel.setOpaque(false);
-        bottomRightPanel.add(muteButton);
         bottomRightPanel.add(exitButton);
 
         JPanel bottomLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         bottomLeftPanel.setOpaque(false);
         bottomLeftPanel.add(clockLabel);
+        bottomLeftPanel.add(volumeIconLabel);
+        bottomLeftPanel.add(volumeSlider);
+        bottomLeftPanel.add(volumePercentageLabel);
 
         southWrapperPanel.add(bottomLeftPanel, BorderLayout.WEST);
         southWrapperPanel.add(bottomRightPanel, BorderLayout.EAST);
@@ -114,22 +159,54 @@ public class Main extends JFrame {
     }
 
     private void registerEventListeners() {
+        addHoverEffect(adminButton, 140, 40, 150, 45, 15f, 20f);
+        addHoverEffect(mahasiswaButton, 140, 40, 150, 45, 15f, 20f);
+
         exitButton.addActionListener(e -> showExitConfirmation());
 
-        muteButton.addActionListener(e -> toggleMute());
+        volumeIconLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                toggleMute();
+            }
+        });
+
+        volumeSlider.addChangeListener(e -> {
+            int vol = volumeSlider.getValue();
+            volumePercentageLabel.setText(vol + "%");
+
+            if (gainControl != null) {
+                if (vol == 0) {
+                    gainControl.setValue(gainControl.getMinimum());
+                    isMuted = true;
+                    ImageIcon icon = new ImageIcon("assets/icons/volume_mute.png");
+                    Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                    volumeIconLabel.setIcon(new ImageIcon(image));
+                    backgroundClip.stop();
+                } else {
+                    float gain = (float) (Math.log10(vol / 100f) * 20);
+                    gainControl.setValue(Math.max(gain, gainControl.getMinimum()));
+                    isMuted = false;
+                    ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+                    Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                    volumeIconLabel.setIcon(new ImageIcon(image));
+                    if (!backgroundClip.isRunning()) backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            }
+        });
 
         Timer clockTimer = new Timer(1000, e -> updateClock());
         clockTimer.start();
 
         adminButton.addActionListener(e -> {
-            playSoundEffect("click.wav");
+            playSoundEffect("assets/sounds/click.wav");;
             new AdminPage();
         });
+
         mahasiswaButton.addActionListener(e -> {
-            playSoundEffect("click.wav");
+            playSoundEffect("assets/sounds/click.wav");
             new MahasiswaPage();
         });
-
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -141,6 +218,29 @@ public class Main extends JFrame {
         });
     }
 
+    // --- Method untuk hover Button ---
+
+    private void addHoverEffect(RoundedButton selectedButton, int originalWidth, int originalHeight, int hoverWidth, int hoverHeight, float originalFontSize, float hoverFontSize) {
+        Dimension originalSize = new Dimension(originalWidth, originalHeight);
+        Dimension hoverSize = new Dimension(hoverWidth, hoverHeight);
+
+        selectedButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                selectedButton.setPreferredSize(hoverSize);
+                selectedButton.setFont(selectedButton.getFont().deriveFont(hoverFontSize));
+                selectedButton.revalidate();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                selectedButton.setPreferredSize(originalSize);
+                selectedButton.setFont(selectedButton.getFont().deriveFont(originalFontSize));
+                selectedButton.revalidate();
+            }
+        });
+    }
+
     private void playBackgroundMusic(String filePath) {
         try {
             File audioFile = new File(filePath);
@@ -148,6 +248,12 @@ public class Main extends JFrame {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
                 backgroundClip = AudioSystem.getClip();
                 backgroundClip.open(audioStream);
+
+                if (backgroundClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                    gainControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+                    updateGainFromSlider();
+                }
+
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
             } else {
                 System.err.println("File musik tidak ditemukan: " + filePath);
@@ -156,8 +262,6 @@ public class Main extends JFrame {
             e.printStackTrace();
         }
     }
-
-
 
     private void playSoundEffect(String filePath) {
         try {
@@ -190,15 +294,23 @@ public class Main extends JFrame {
     // --- Method untuk Aksi & Logika ---
 
     private void toggleMute() {
-        if (backgroundClip != null) {
+        if (backgroundClip != null && gainControl != null) {
             if (isMuted) {
+                isMuted = false;
+                volumeSlider.setValue(previousVolume > 0 ? previousVolume : 100);
+                ImageIcon icon = new ImageIcon("assets/icons/volume_up.png");
+                Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                volumeIconLabel.setIcon(new ImageIcon(image));
                 backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
-                muteButton.setText("Mute");
             } else {
+                isMuted = true;
+                previousVolume = volumeSlider.getValue();
+                volumeSlider.setValue(0);
+                ImageIcon icon = new ImageIcon("assets/icons/volume_mute.png");
+                Image image = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                volumeIconLabel.setIcon(new ImageIcon(image));
                 backgroundClip.stop();
-                muteButton.setText("Unmute");
             }
-            isMuted = !isMuted;
         }
     }
 
@@ -208,8 +320,10 @@ public class Main extends JFrame {
     }
 
     private void showExitConfirmation() {
+        JDialog exitDialog = new JDialog();
+        exitDialog.setAlwaysOnTop(true);
         int response = JOptionPane.showConfirmDialog(
-                this,
+                exitDialog,
                 "Apakah Anda yakin ingin keluar?",
                 "Konfirmasi Keluar",
                 JOptionPane.YES_NO_OPTION,
@@ -238,10 +352,21 @@ public class Main extends JFrame {
         button.setBorder(BorderFactory.createLineBorder(color.darker()));
     }
 
-    // --- Kelas Internal & Main Method ---
+    private void updateGainFromSlider() {
+        if (gainControl != null) {
+            float volume = volumeSlider.getValue() / 100f;
+            if (volume == 0) {
+                gainControl.setValue(gainControl.getMinimum());
+            } else {
+                float gain = (float) (Math.log10(volume) * 20);
+                gainControl.setValue(Math.max(gain, gainControl.getMinimum()));
+            }
+        }
+    }
+
+    // --- Kelas Internal & main.Main Method ---
 
     class BackgroundPanel extends JPanel {
-
         private Image backgroundImage;
 
         public BackgroundPanel(String filePath) {

@@ -1,6 +1,7 @@
+package view;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class AdminPage extends JFrame {
 
@@ -14,6 +15,7 @@ public class AdminPage extends JFrame {
         registerEventListeners();
 
         setVisible(true);
+        setAlwaysOnTop(true);
     }
 
     private void initFrame() {
@@ -40,7 +42,7 @@ public class AdminPage extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
 
         try {
-            ImageIcon adminIcon = new ImageIcon(new ImageIcon("admin_icon.png").getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+            ImageIcon adminIcon = new ImageIcon(new ImageIcon("assets/icons/admin_icon.png").getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH));
             JLabel iconLabel = new JLabel(adminIcon);
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -71,12 +73,12 @@ public class AdminPage extends JFrame {
 
     private void registerEventListeners() {
         loginButton.addActionListener(e -> {
-            new AdminLogIn();
+            new AdminSignInPage();
             this.dispose();
         });
 
         signupButton.addActionListener(e -> {
-            new AdminSignUp();
+            new AdminSignUpPage();
             this.dispose();
         });
     }

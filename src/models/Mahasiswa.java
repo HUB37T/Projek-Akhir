@@ -1,9 +1,6 @@
+package models;
 
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class Mahasiswa {
 
@@ -11,7 +8,7 @@ public class Mahasiswa {
     private String nama;
     private String prodi;
 
-    File penggunaFile = new File("dataMahasiswa.txt");
+    File penggunaFile = new File("data/dataMahasiswa.txt");
     public Mahasiswa(String nim, String nama, String prodi) {
         this.nim = nim;
         this.nama = nama;
