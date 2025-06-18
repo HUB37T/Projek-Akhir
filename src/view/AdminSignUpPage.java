@@ -112,7 +112,7 @@ public class AdminSignUpPage extends JFrame {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AdminHomePage();
+                new AdminSignInPage();
                 dispose();
             }
         });
