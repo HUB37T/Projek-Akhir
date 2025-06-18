@@ -1,6 +1,7 @@
 package view;
 import util.CustomTextField;
 import controllers.OperatorAdmin;
+import util.RoundedButton;
 
 import java.awt.*;
 import javax.swing.*;
@@ -189,6 +190,7 @@ public class AdminSignUpPage extends JFrame {
         gbc.insets = new Insets(5, 20, 0, 20);
         return gbc;
     }
+
     private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight) {
         GridBagConstraints gbc = gbc(gridx, gridy);
         gbc.gridwidth = gridwidth;
@@ -197,13 +199,10 @@ public class AdminSignUpPage extends JFrame {
         gbc.insets = new Insets(5, 20, 10, 20);
         return gbc;
     }
+
     private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight, Insets insets) {
         GridBagConstraints gbc = gbc(gridx, gridy, gridwidth, gridheight);
         gbc.insets = insets;
         return gbc;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminSignUpPage::new);
     }
 }

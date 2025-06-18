@@ -1,5 +1,7 @@
 package view;
 
+import util.RoundedButton;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -97,9 +99,5 @@ public class MahasiswaPage extends JFrame {
         } catch (Exception e) {
             System.err.println("Ikon tidak ditemukan: " + iconPath);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MahasiswaPage::new);
     }
 }

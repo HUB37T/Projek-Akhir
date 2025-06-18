@@ -1,6 +1,7 @@
 package view;
 import util.CustomTextField;
 import controllers.OperatorMahasiswa;
+import util.RoundedButton;
 
 import java.awt.*;
 import javax.swing.*;
@@ -170,9 +171,5 @@ public class MahasiswaSignInPage extends JFrame {
         GridBagConstraints gbc = gbc(gridx, gridy, gridwidth, gridheight);
         gbc.insets = insets;
         return gbc;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MahasiswaSignInPage::new);
     }
 }

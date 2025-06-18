@@ -1,5 +1,7 @@
 package view;
 
+import util.RoundedButton;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -27,7 +29,7 @@ public class AdminPage extends JFrame {
     }
 
     private void initComponents() {
-        loginButton = new RoundedButton("Log In");
+        loginButton = new RoundedButton("Sign In");
         styleButton(loginButton);
 
         signupButton = new RoundedButton("Sign Up");
@@ -90,8 +92,4 @@ public class AdminPage extends JFrame {
         button.setPreferredSize(new Dimension(140, 40));
     }
 
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminPage::new);
-    }
 }

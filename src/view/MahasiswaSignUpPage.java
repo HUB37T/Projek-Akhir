@@ -1,6 +1,7 @@
 package view;
 import util.CustomTextField;
 import controllers.OperatorMahasiswa;
+import util.RoundedButton;
 
 import java.awt.*;
 import javax.swing.*;
@@ -180,6 +181,7 @@ public class MahasiswaSignUpPage extends JFrame {
         gbc.insets = new Insets(5, 20, 0, 20);
         return gbc;
     }
+
     private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight) {
         GridBagConstraints gbc = gbc(gridx, gridy);
         gbc.gridwidth = gridwidth;
@@ -188,16 +190,14 @@ public class MahasiswaSignUpPage extends JFrame {
         gbc.insets = new Insets(5, 20, 10, 20);
         return gbc;
     }
+
     private GridBagConstraints gbc(int gridx, int gridy, int gridwidth, int gridheight, Insets insets) {
         GridBagConstraints gbc = gbc(gridx, gridy, gridwidth, gridheight);
         gbc.insets = insets;
         return gbc;
     }
+
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Peringatan", JOptionPane.WARNING_MESSAGE);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MahasiswaSignUpPage::new);
     }
 }
