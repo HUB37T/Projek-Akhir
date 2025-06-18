@@ -29,7 +29,7 @@ public class AdminPage extends JFrame {
     }
 
     private void initComponents() {
-        loginButton = new RoundedButton("Log In");
+        loginButton = new RoundedButton("Sign In");
         styleButton(loginButton);
 
         signupButton = new RoundedButton("Sign Up");
