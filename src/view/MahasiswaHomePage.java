@@ -1,19 +1,22 @@
 package view;
-import main.Perpustakaan;
 import controllers.OperatorMahasiswa;
+import main.Perpustakaan;
 
-import java.io.*;
 import java.awt.*;
-import java.text.*;
-import java.time.*;
-import java.util.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import javax.swing.*;
-import java.awt.event.*;
-import javax.swing.table.*;
-import java.time.temporal.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
-public class MahasiswaHomePage extends JFrame {
+public class HalamanAktivitasMahasiswa extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
     private String nim = OperatorMahasiswa.nimLog;
     private String nama = OperatorMahasiswa.namaLog;
@@ -25,9 +28,8 @@ public class MahasiswaHomePage extends JFrame {
     private JTable tabelKembali;
     private JTable tabelPinjam;
 
-    public MahasiswaHomePage() {
+    public HalamanAktivitasMahasiswa() {
         initFrame();
-        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 
@@ -83,9 +85,9 @@ public class MahasiswaHomePage extends JFrame {
         cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
 
         //button
-        RoundedButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
-        RoundedButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
-        RoundedButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
+        JButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
+        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
+        JButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldPinjam);
@@ -93,11 +95,10 @@ public class MahasiswaHomePage extends JFrame {
         topPanel.add(pinjamBtn);
         topPanel.add(listBtn);
 
-        // --- Tabel semua pinjaman ---
-
-        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+        // Tabel semua pinjaman
+        tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0){
             @Override
-            public boolean isCellEditable(int row, int column){
+            public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
@@ -163,7 +164,6 @@ public class MahasiswaHomePage extends JFrame {
     }
 
     // --- TAB 2: PENGEMBALIAN BUKU ---
-
     private JPanel createPengembalianBukuTab() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setOpaque(false);
@@ -181,9 +181,9 @@ public class MahasiswaHomePage extends JFrame {
         cariFieldKembali.setPreferredSize(new Dimension(200, 35));
 
         //button
-        RoundedButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
-        RoundedButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
-        RoundedButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
+        JButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
+        JButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
@@ -192,7 +192,7 @@ public class MahasiswaHomePage extends JFrame {
         topPanel.add(refreshBtn);
 
         //tabel
-        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
+        tabelModelKembali = new DefaultTableModel(new String[]{"Kode Buku", "Judul", "Tanggal Pinjam"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -288,7 +288,6 @@ public class MahasiswaHomePage extends JFrame {
     }
 
     // --- TAB 3: MANAJEMEN AKUN ---
-
     private JPanel createManajemenAkunTab() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -302,20 +301,20 @@ public class MahasiswaHomePage extends JFrame {
         gbc.gridwidth = 2;
         panel.add(titleLabel, gbc);
 
-        RoundedButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
+        JButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
         editBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(editBtn, gbc);
 
-        JLabel editDesc = new JLabel("Perbarui nama, password, atau prodi Anda.");
+        JLabel editDesc = new JLabel("<html>Perbarui nama, password, atau prodi Anda.</html>");
         editDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(editDesc, gbc);
 
-        RoundedButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
+        JButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
         hapusBtn.setBackground(new Color(139, 0, 0));
         hapusBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridx = 0;
@@ -323,7 +322,7 @@ public class MahasiswaHomePage extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(hapusBtn, gbc);
 
-        JLabel hapusDesc = new JLabel("Hapus akun Anda secara permanen dari sistem.");
+        JLabel hapusDesc = new JLabel("<html>Hapus akun Anda secara permanen dari sistem.</html>");
         hapusDesc.setForeground(Color.LIGHT_GRAY);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -421,7 +420,7 @@ public class MahasiswaHomePage extends JFrame {
         label.setForeground(Color.WHITE);
         return label;
     }
-    private RoundedButton createStyledButton(String text, String iconPath) {
+    private JButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
@@ -516,7 +515,7 @@ public class MahasiswaHomePage extends JFrame {
             qrLabel = new JLabel(new ImageIcon(image));
         }
 
-        RoundedButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
+        JButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
         payButton.addActionListener(e -> {
             prosesPengembalianBuku(kodeBuku);
             paymentDialog.dispose();
@@ -561,6 +560,6 @@ public class MahasiswaHomePage extends JFrame {
     public static void main(String[] args) {
         OperatorMahasiswa.nimLog = "000";
         OperatorMahasiswa.namaLog = "Guest";
-        SwingUtilities.invokeLater(() -> new MahasiswaHomePage().setVisible(true));
+        SwingUtilities.invokeLater(() -> new HalamanAktivitasMahasiswa().setVisible(true));
     }
 }
