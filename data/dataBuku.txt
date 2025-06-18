@@ -1,2 +1,30 @@
-1;Filkom;Hubert;2
-2;Hello;Fahry, Orie;3
+B001;Laskar Pelangi;Andrea Hirata;8
+B002;Bumi Manusia;Pramoedya Ananta Toer;5
+B003;Good Omens;Terry Pratchett, Neil Gaiman;7
+B004;Negeri 5 Menara;Ahmad Fuadi;7
+B005;Ayat-Ayat Cinta;Habiburrahman El Shirazy;6
+B006;Filosofi Kopi;Dee Lestari;9
+B007;The Talisman;Stephen King, Peter Straub;5
+B008;Gadis Kretek;Ratih Kumala;5
+B009;Sapiens: Riwayat Singkat Umat Manusia;Yuval Noah Harari;10
+B010;Atomic Habits;James Clear;12
+B011;The Psychology of Money;Morgan Housel;11
+B012;Sebuah Seni untuk Bersikap Bodo Amat;Mark Manson;15
+B013;Freakonomics;Steven D. Levitt, Stephen J. Dubner;9
+B014;Rich Dad Poor Dad;Robert T. Kiyosaki;9
+B015;Nudge: Improving Decisions About Health, Wealth, and Happiness;Richard H. Thaler, Cass R. Sunstein;8
+B016;Harry Potter and the Sorcerer's Stone;J.K. Rowling;10
+B017;The Lord of the Rings: The Fellowship of the Ring;J.R.R. Tolkien;6
+B018;Will Grayson, Will Grayson;John Green, David Levithan;10
+B019;1984;George Orwell;5
+B020;Critical Eleven;Ika Natassa, Pritagita Arianegara;11
+B021;Laut Bercerita;Leila S. Chudori;8
+B022;Hujan;Tere Liye;9
+B023;Pulang;Tere Liye;7
+B024;The Guernsey Literary and Potato Peel Pie Society;Mary Ann Shaffer, Annie Barrows;6
+B025;Thinking, Fast and Slow;Daniel Kahneman;6
+B026;All the President's Men;Carl Bernstein, Bob Woodward;5
+B027;Dilan: Dia adalah Dilanku Tahun 1990;Pidi Baiq;11
+B028;This Is How You Lose the Time War;Amal El-Mohtar, Max Gladstone;7
+B029;Start with Why: How Great Leaders Inspire Everyone to Take Action;Simon Sinek;8
+B030;The Personal MBA;Josh Kaufman, Ankur Nagpal;9
