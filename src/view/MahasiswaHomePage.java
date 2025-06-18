@@ -506,9 +506,9 @@ public class MahasiswaHomePage extends JFrame {
         paymentDialog.setLayout(new BorderLayout(10, 10));
         paymentDialog.getContentPane().setBackground(new Color(0x3B1A12));
 
-        ImageIcon qrIcon = new ImageIcon("qris.jpg");
+        ImageIcon qrIcon = new ImageIcon("assets/images/qris.jpg");
         JLabel qrLabel;
-        if (qrIcon.getImageLoadStatus() == MediaTracker.ERRORED || !new File("qris.jpg").exists()) {
+        if (qrIcon.getImageLoadStatus() == MediaTracker.ERRORED || !new File("assets/images/qris.jpg").exists()) {
             qrLabel = new JLabel("Gagal memuat gambar qris.jpg", SwingConstants.CENTER);
             qrLabel.setForeground(Color.RED);
         } else {
