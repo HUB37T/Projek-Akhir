@@ -92,8 +92,4 @@ public class AdminPage extends JFrame {
         button.setPreferredSize(new Dimension(140, 40));
     }
 
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminPage::new);
-    }
 }

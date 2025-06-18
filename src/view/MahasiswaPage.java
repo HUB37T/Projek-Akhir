@@ -100,8 +100,4 @@ public class MahasiswaPage extends JFrame {
             System.err.println("Ikon tidak ditemukan: " + iconPath);
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MahasiswaPage::new);
-    }
 }

@@ -163,9 +163,4 @@ public class AdminSignInPage extends JFrame {
         gbc.insets = (insets.length > 0) ? insets[0] : new Insets(5, 20, 10, 20);
         return gbc;
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminSignInPage::new);
-    }
 }
-

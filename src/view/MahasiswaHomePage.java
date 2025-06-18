@@ -98,7 +98,7 @@ public class MahasiswaHomePage extends JFrame {
 
         tabelModelPinjam = new DefaultTableModel(new String[]{"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"}, 0) {
             @Override
-            public boolean isCellEditable(int row, int column){
+            public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
@@ -404,6 +404,7 @@ public class MahasiswaHomePage extends JFrame {
         header.setFont(new Font("Lato", Font.BOLD, 16));
         ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
     }
+
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField();
         textField.setFont(new Font("Lato", Font.PLAIN, 14));
@@ -416,12 +417,14 @@ public class MahasiswaHomePage extends JFrame {
         ));
         return textField;
     }
+
     private JLabel createStyledLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Lato", Font.BOLD, 14));
         label.setForeground(Color.WHITE);
         return label;
     }
+
     private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
@@ -460,6 +463,7 @@ public class MahasiswaHomePage extends JFrame {
             JOptionPane.showMessageDialog(this, "Gagal meminjam buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private String findPinjamanRecord(String nim, String kodeBuku) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
@@ -486,6 +490,7 @@ public class MahasiswaHomePage extends JFrame {
             JOptionPane.showMessageDialog(this, "Gagal memproses pengembalian: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private boolean checkHasBorrowedBooks(String nim) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
             String line;
@@ -545,6 +550,7 @@ public class MahasiswaHomePage extends JFrame {
         } catch (IOException e) {
         }
     }
+
     public void tampilkanTabelPinjamanMahasiswa() {
         tabelModelKembali.setRowCount(0);
         try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
@@ -559,9 +565,4 @@ public class MahasiswaHomePage extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        OperatorMahasiswa.nimLog = "000";
-        OperatorMahasiswa.namaLog = "Guest";
-        SwingUtilities.invokeLater(() -> new MahasiswaHomePage().setVisible(true));
-    }
 }

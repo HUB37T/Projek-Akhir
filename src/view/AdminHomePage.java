@@ -492,8 +492,4 @@ public class AdminHomePage extends JFrame {
             }
         });
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminHomePage::new);
-    }
 }

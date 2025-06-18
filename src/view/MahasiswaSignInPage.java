@@ -172,8 +172,4 @@ public class MahasiswaSignInPage extends JFrame {
         gbc.insets = insets;
         return gbc;
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MahasiswaSignInPage::new);
-    }
 }
