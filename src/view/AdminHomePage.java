@@ -2,22 +2,16 @@ package view;
 import main.Perpustakaan;
 import util.RoundedButton;
 
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.awt.*;
+import java.time.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import java.util.List;
+import java.nio.file.*;
+import java.awt.event.*;
+import javax.swing.table.*;
+import javax.swing.border.*;
 
 public class AdminHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
@@ -34,6 +28,7 @@ public class AdminHomePage extends JFrame {
 
     public AdminHomePage() {
         initFrame();
+        setAlwaysOnTop(true);
 
         JTabbedPane tabbedPane = createStyledTabbedPane();
 
@@ -51,7 +46,7 @@ public class AdminHomePage extends JFrame {
     }
 
     private void initFrame() {
-        setTitle("Halaman Utama Admin - main.Perpustakaan");
+        setTitle("Halaman Utama Admin - Perpustakaan");
         setSize(950, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -77,6 +72,7 @@ public class AdminHomePage extends JFrame {
         JPanel panelBuku = new JPanel(new BorderLayout(10, 10));
         panelBuku.setOpaque(false);
         panelBuku.setBorder(new EmptyBorder(10, 10, 10, 10));
+
 
         panelBuku.add(createBukuFormPanel(), BorderLayout.WEST);
         panelBuku.add(createBukuTablePanel(), BorderLayout.CENTER);
@@ -126,9 +122,9 @@ public class AdminHomePage extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setOpaque(false);
 
-        JButton btnAdd = createStyledButton("Add", "assets/icons/add_icon.png");
-        JButton btnEdit = createStyledButton("Edit", "assets/icons/edit_icon.png");
-        JButton btnDelete = createStyledButton("Delete", "assets/icons/delete_icon.png");
+        RoundedButton btnAdd = createStyledButton("Add", "assets/icons/add_icon.png");
+        RoundedButton btnEdit = createStyledButton("Edit", "assets/icons/edit_icon.png");
+        RoundedButton btnDelete = createStyledButton("Delete", "assets/icons/delete_icon.png");
 
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
@@ -140,11 +136,7 @@ public class AdminHomePage extends JFrame {
         formPanel.add(buttonPanel, gbc);
 
         btnAdd.addActionListener(e -> {
-            try {
-                addBuku();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            addBuku();
         });
         btnEdit.addActionListener(e -> {
             try {
@@ -164,22 +156,26 @@ public class AdminHomePage extends JFrame {
 
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topButtonPanel.setOpaque(false);
-        JButton btnSearch = createStyledButton("Search", "assets/icons/search_icon.png");
-        JButton refresh = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton btnSearch = createStyledButton("Search", "assets/icons/search_icon.png");
+        RoundedButton refresh = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
         topButtonPanel.add(btnSearch);
         topButtonPanel.add(refresh);
 
-        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0){
+        modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column){
                 return false;
             }
         };
         tableBuku = new JTable(modelBuku);
         styleTable(tableBuku);
 
+        JScrollPane tableScroll = new JScrollPane(tableBuku);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
         tablePanel.add(topButtonPanel, BorderLayout.NORTH);
-        tablePanel.add(new JScrollPane(tableBuku), BorderLayout.CENTER);
+        tablePanel.add(tableScroll, BorderLayout.CENTER);
 
         btnSearch.addActionListener(e -> {
             try {
@@ -211,9 +207,9 @@ public class AdminHomePage extends JFrame {
 
         tfCari = createStyledTextField();
         tfCari.setPreferredSize(new Dimension(200, 35));
-        JButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
-        JButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
-        JButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
+        RoundedButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
+        RoundedButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Cari NIM:"));
         topPanel.add(tfCari);
@@ -228,19 +224,24 @@ public class AdminHomePage extends JFrame {
                 if (columnIndex == 3) { return LocalDate.class; }
                 return Object.class;
             }
+
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column){
                 return false;
             }
         };
         tableTransaksi = new JTable(modelTransaksi);
         styleTable(tableTransaksi);
 
+        JScrollPane tableScroll = new JScrollPane(tableTransaksi);
+        tableScroll.getViewport().setBackground(new Color(0x4a2c2a));
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(0xDAA520)));
+
         sorterTransaksi = new TableRowSorter<>(modelTransaksi);
         tableTransaksi.setRowSorter(sorterTransaksi);
 
         panelTransaksi.add(topPanel, BorderLayout.NORTH);
-        panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
+        panelTransaksi.add(tableScroll, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> tampilkanTabelPinjam());
         btnCari.addActionListener(e -> {
@@ -300,7 +301,7 @@ public class AdminHomePage extends JFrame {
         return label;
     }
 
-    private JButton createStyledButton(String text, String iconPath) {
+    private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
@@ -313,55 +314,66 @@ public class AdminHomePage extends JFrame {
         }
         return button;
     }
-    private void addBuku() throws IOException {
-        String Kode = tfKode.getText();
-        String Judul = tfJudul.getText();
-        String jumlahPengarang = tfPengarang.getText().trim();
-        String Jumlah = tfJumlah.getText().trim();
-        if(perpustakaan.cariBuku(Kode) != null){
-            JOptionPane.showMessageDialog(this, "Kode buku tidak boleh sama!");
+    private void addBuku() {
+        String kode = tfKode.getText().trim();
+        String judul = tfJudul.getText().trim();
+        String jumlahPengarangStr = tfPengarang.getText().trim();
+        String jumlahBukuStr = tfJumlah.getText().trim();
+
+        if (kode.isEmpty() || judul.isEmpty() || jumlahPengarangStr.isEmpty() || jumlahBukuStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         try {
-            if (perpustakaan.cariBuku(Kode) != null) {
+            if (perpustakaan.cariBuku(kode) != null) {
                 JOptionPane.showMessageDialog(this, "Kode buku sudah ada!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            jumlah = Integer.parseInt(jumlahPengarang);
-            if (jumlah <= 0) throw new NumberFormatException();
 
-            pengarangSet.clear();
-            pengarangKe = 1;
-            inputNamaPengarang(Kode, Judul, Integer.parseInt(Jumlah));
+            int jumlahPengarang = Integer.parseInt(jumlahPengarangStr);
+            int jumlahBuku = Integer.parseInt(jumlahBukuStr);
+            TreeSet<String> pengarangSet = new TreeSet<>();
+
+            if (jumlahPengarang <= 0 || jumlahBuku <= 0) {
+                JOptionPane.showMessageDialog(this, "Jumlah pengarang dan jumlah buku harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int pengarangKe = 1;
+            while (pengarangKe <= jumlahPengarang) {
+                String nama = JOptionPane.showInputDialog(this, "Masukkan nama pengarang ke-" + pengarangKe + ":");
+
+                if (nama == null) {
+                    JOptionPane.showMessageDialog(this, "Proses penambahan buku dibatalkan.", "Dibatalkan", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                if (!nama.trim().isEmpty()) {
+                    pengarangSet.add(nama.trim());
+                    pengarangKe++;
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Nama pengarang tidak boleh kosong.");
+                }
+            }
+
+            perpustakaan.simpanBuku(kode, judul, pengarangSet, jumlahBuku);
+            JOptionPane.showMessageDialog(this, "Buku berhasil disimpan!");
+            tampilkanTabelBuku();
+
+            tfKode.setText("");
+            tfJudul.setText("");
+            tfPengarang.setText("");
+            tfJumlah.setText("");
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Jumlah pengarang dan jumlah buku harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Gagal memeriksa buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Jumlah pengarang dan jumlah buku harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void inputNamaPengarang(String kode, String judul, int jumlahBuku) {
-        if (pengarangKe > jumlah) {
-            try {
-                perpustakaan.simpanBuku(kode, judul, pengarangSet, jumlahBuku);
-                JOptionPane.showMessageDialog(null, "Buku berhasil disimpan!");
-                tampilkanTabelBuku(); // Refresh tabel
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Gagal menyimpan buku ke file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            return;
-        }
 
-        String nama = JOptionPane.showInputDialog(null, "Masukkan nama pengarang ke-" + pengarangKe + ":");
-        if (nama != null && !nama.trim().isEmpty()) {
-            pengarangSet.add(nama.trim());
-            pengarangKe++;
-            inputNamaPengarang(kode, judul, jumlahBuku);
-        } else if (nama != null) {
-            JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.");
-            inputNamaPengarang(kode, judul, jumlahBuku);
-        }
-    }
     public void tampilkanTabelBuku() {
         modelBuku.setRowCount(0);
         try (BufferedReader reader = Files.newBufferedReader(Paths.get("data/dataBuku.txt"))) {
@@ -378,54 +390,61 @@ public class AdminHomePage extends JFrame {
             }
         }
     }
-
-    private void editBuku() throws Exception {
+    private void editBuku() throws Exception{
         String kode = tfKode.getText().trim();
         String judul = tfJudul.getText().trim();
-        String jumlahPengarangText = tfPengarang.getText().trim();
-        String jumlahBukuText = tfJumlah.getText().trim();
+        String jumlahPengarangStr = tfPengarang.getText().trim();
+        String jumlahBukuStr = tfJumlah.getText().trim();
 
-        if (kode.isEmpty() || judul.isEmpty() || jumlahPengarangText.isEmpty() || jumlahBukuText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (kode.isEmpty() || judul.isEmpty() || jumlahPengarangStr.isEmpty() || jumlahBukuStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi untuk mengedit!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            jumlah = Integer.parseInt(jumlahPengarangText);
-            if (jumlah <= 0) throw new NumberFormatException();
-
-            pengarangSet.clear();
-            pengarangKe = 1;
-
-            editNamaPengarang(kode, judul, Integer.parseInt(jumlahBukuText));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public void editNamaPengarang(String kode, String judul, int jumlahBuku) {
-
-        if (pengarangKe > jumlah) {
-            try {
-                perpustakaan.editBuku(kode, judul, pengarangSet, jumlahBuku);
-                JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
-                tampilkanTabelBuku(); // Refresh tabel setelah berhasil disimpan
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Gagal menyimpan buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            if (perpustakaan.cariBuku(kode) == null) {
+                JOptionPane.showMessageDialog(this, "Buku dengan kode '" + kode + "' tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            return;
-        }
 
-        String nama = JOptionPane.showInputDialog(null, "Masukkan nama pengarang ke-" + pengarangKe + ":");
-        if (nama != null && !nama.trim().isEmpty()) {
-            pengarangSet.add(nama.trim());
-            pengarangKe++;
-            editNamaPengarang(kode, judul, jumlahBuku);
-        } else if (nama != null) {
-            JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            editNamaPengarang(kode, judul, jumlahBuku);
-        }
+            int jumlahPengarang = Integer.parseInt(jumlahPengarangStr);
+            int jumlahBuku = Integer.parseInt(jumlahBukuStr);
+            TreeSet<String> pengarangSet = new TreeSet<>();
 
+            if (jumlahPengarang <= 0 || jumlahBuku < 0) {
+                JOptionPane.showMessageDialog(this, "Jumlah pengarang harus > 0 dan jumlah buku harus >= 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int pengarangKe = 1;
+            while (pengarangKe <= jumlahPengarang) {
+                String nama = JOptionPane.showInputDialog(this, "Masukkan nama pengarang baru ke-" + pengarangKe + ":");
+
+                if (nama == null) {
+                    JOptionPane.showMessageDialog(this, "Proses edit buku dibatalkan.", "Dibatalkan", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                if (!nama.trim().isEmpty()) {
+                    pengarangSet.add(nama.trim());
+                    pengarangKe++;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nama pengarang tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
+            perpustakaan.editBuku(kode, judul, pengarangSet, jumlahBuku);
+            JOptionPane.showMessageDialog(this, "Buku berhasil diedit!");
+            tampilkanTabelBuku();
+
+            tfKode.setText("");
+            tfJudul.setText("");
+            tfPengarang.setText("");
+            tfJumlah.setText("");
+
+        }catch(NumberFormatException ex) {
+
+        }
     }
     private void cariBuku() throws Exception {
         String kode = tfKode.getText().trim();
@@ -447,10 +466,10 @@ public class AdminHomePage extends JFrame {
         String kode = tfKode.getText().trim();
         try{
             perpustakaan.hapusBuku(kode);
-            JOptionPane.showMessageDialog(null, "Buku berhasil dihapus!");
+            JOptionPane.showMessageDialog(this, "Buku berhasil dihapus!");
             tampilkanTabelBuku();
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     public void tampilkanTabelPinjam() {
