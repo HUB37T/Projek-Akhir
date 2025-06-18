@@ -86,9 +86,9 @@ public class MahasiswaHomePage extends JFrame {
         cariFieldPinjam.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
-        JButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
-        JButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
+        RoundedButton cariBtn = createStyledButton("Cari Buku", "assets/icons/search_icon.png");
+        RoundedButton pinjamBtn = createStyledButton("Pinjam Buku Ini", "assets/icons/borrow_icon.png");
+        RoundedButton listBtn = createStyledButton("List Buku Tersedia", "assets/icons/list_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldPinjam);
@@ -184,9 +184,9 @@ public class MahasiswaHomePage extends JFrame {
         cariFieldKembali.setPreferredSize(new Dimension(200, 35));
 
         //button
-        JButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
-        JButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
-        JButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton kembalikanBtn = createStyledButton("Kembalikan Buku Ini", "assets/icons/return_icon.png");
+        RoundedButton listBtn = createStyledButton("List Buku Dipinjam", "assets/icons/list_icon.png");
+        RoundedButton refreshBtn = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Kode Buku:"));
         topPanel.add(cariFieldKembali);
@@ -305,7 +305,7 @@ public class MahasiswaHomePage extends JFrame {
         gbc.gridwidth = 2;
         panel.add(titleLabel, gbc);
 
-        JButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
+        RoundedButton editBtn = createStyledButton("Edit Akun", "assets/icons/edit_user_icon.png");
         editBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -318,7 +318,7 @@ public class MahasiswaHomePage extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(editDesc, gbc);
 
-        JButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
+        RoundedButton hapusBtn = createStyledButton("Hapus Akun", "assets/icons/delete_user_icon.png");
         hapusBtn.setBackground(new Color(139, 0, 0));
         hapusBtn.setPreferredSize(new Dimension(250, 50));
         gbc.gridx = 0;
@@ -424,7 +424,7 @@ public class MahasiswaHomePage extends JFrame {
         label.setForeground(Color.WHITE);
         return label;
     }
-    private JButton createStyledButton(String text, String iconPath) {
+    private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));
@@ -519,7 +519,7 @@ public class MahasiswaHomePage extends JFrame {
             qrLabel = new JLabel(new ImageIcon(image));
         }
 
-        JButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
+        RoundedButton payButton = createStyledButton("Saya Sudah Bayar", "assets/icons/payment_icon.png");
         payButton.addActionListener(e -> {
             prosesPengembalianBuku(kodeBuku);
             paymentDialog.dispose();

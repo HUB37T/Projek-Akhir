@@ -1,13 +1,15 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
+import java.io.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.sound.sampled.*;
 
 public class RoundedButton extends JButton {
     private Color originalBackgroundColor;
     private Color hoverBackgroundColor;
+    private Clip clickSFX;
 
     public RoundedButton(String text) {
         super(text);
@@ -15,6 +17,8 @@ public class RoundedButton extends JButton {
         setContentAreaFilled(false);
         setFocusPainted(false);
         setBorderPainted(false);
+
+        loadSound("assets/sounds/click.wav");
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -28,7 +32,36 @@ public class RoundedButton extends JButton {
             public void mouseExited(MouseEvent e) {
                 RoundedButton.super.setBackground(originalBackgroundColor);
             }
+
         });
+
+        addActionListener(e -> playSound());
+    }
+
+
+
+    private void loadSound(String soundPath) {
+        try {
+            File audioFile = new File(soundPath);
+            if (audioFile.exists()) {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                clickSFX = AudioSystem.getClip();
+                clickSFX.open(audioStream);
+            } else {
+                System.err.println("File suara tidak ditemukan: " + soundPath);
+            }
+        } catch (Exception e) {
+            System.err.println("Gagal memuat suara: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void playSound() {
+        if (clickSFX != null) {
+            if (clickSFX.isRunning()) clickSFX.stop();
+            clickSFX.setFramePosition(0);
+            clickSFX.start();
+        }
     }
 
     @Override

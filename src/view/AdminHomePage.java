@@ -127,9 +127,9 @@ public class AdminHomePage extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setOpaque(false);
 
-        JButton btnAdd = createStyledButton("Add", "assets/icons/add_icon.png");
-        JButton btnEdit = createStyledButton("Edit", "assets/icons/edit_icon.png");
-        JButton btnDelete = createStyledButton("Delete", "assets/icons/delete_icon.png");
+        RoundedButton btnAdd = createStyledButton("Add", "assets/icons/add_icon.png");
+        RoundedButton btnEdit = createStyledButton("Edit", "assets/icons/edit_icon.png");
+        RoundedButton btnDelete = createStyledButton("Delete", "assets/icons/delete_icon.png");
 
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
@@ -165,8 +165,8 @@ public class AdminHomePage extends JFrame {
 
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topButtonPanel.setOpaque(false);
-        JButton btnSearch = createStyledButton("Search", "assets/icons/search_icon.png");
-        JButton refresh = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton btnSearch = createStyledButton("Search", "assets/icons/search_icon.png");
+        RoundedButton refresh = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
         topButtonPanel.add(btnSearch);
         topButtonPanel.add(refresh);
 
@@ -216,9 +216,9 @@ public class AdminHomePage extends JFrame {
 
         tfCari = createStyledTextField();
         tfCari.setPreferredSize(new Dimension(200, 35));
-        JButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
-        JButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
-        JButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
+        RoundedButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
+        RoundedButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
 
         topPanel.add(createStyledLabel("Cari NIM:"));
         topPanel.add(tfCari);
@@ -310,7 +310,7 @@ public class AdminHomePage extends JFrame {
         return label;
     }
 
-    private JButton createStyledButton(String text, String iconPath) {
+    private RoundedButton createStyledButton(String text, String iconPath) {
         RoundedButton button = new RoundedButton(text);
         button.setFont(new Font("Lato", Font.BOLD, 12));
         button.setBackground(new Color(218, 165, 32));

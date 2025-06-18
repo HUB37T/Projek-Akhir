@@ -3,18 +3,13 @@ import view.RoundedButton;
 import view.AdminPage;
 import view.MahasiswaPage;
 
-import javax.swing.*;
+import java.io.*;
 import java.awt.*;
+import java.time.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.time.format.*;
 import javax.sound.sampled.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.awt.event.MouseEvent;
-import java.io.InputStream;
 
 public class Main extends JFrame {
     private Clip backgroundClip;
@@ -372,7 +367,6 @@ public class Main extends JFrame {
     // --- Kelas Internal & main.Main Method ---
 
     class BackgroundPanel extends JPanel {
-
         private Image backgroundImage;
 
         public BackgroundPanel(String filePath) {
