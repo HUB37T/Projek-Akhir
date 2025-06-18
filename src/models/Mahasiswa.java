@@ -1,10 +1,6 @@
 package models;
-import controllers.OperatorMahasiswa;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class Mahasiswa {
 

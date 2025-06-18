@@ -1,13 +1,12 @@
 package view;
-import controllers.OperatorAdmin;
 import util.CustomTextField;
+import controllers.OperatorAdmin;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.regex.Pattern;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.regex.*;
+import javax.swing.border.*;
 
 public class AdminSignUpPage extends JFrame {
 

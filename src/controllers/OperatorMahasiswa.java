@@ -1,11 +1,7 @@
 package controllers;
-import models.Mahasiswa;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 public class OperatorMahasiswa {
     File mahasiswaFile = new File("./data/dataMahasiswa.txt");

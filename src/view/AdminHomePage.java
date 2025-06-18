@@ -1,22 +1,16 @@
 package view;
 import main.Perpustakaan;
 
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.awt.*;
+import java.time.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import java.util.List;
+import java.nio.file.*;
+import java.awt.event.*;
+import javax.swing.table.*;
+import javax.swing.border.*;
 
 public class AdminHomePage extends JFrame {
     private Perpustakaan perpustakaan = new Perpustakaan();
