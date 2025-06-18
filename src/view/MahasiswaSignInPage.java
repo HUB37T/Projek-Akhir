@@ -122,7 +122,7 @@ public class MahasiswaSignInPage extends JFrame {
                         JOptionPane.showMessageDialog(this, "Data tidak cocok atau mahasiswa belum terdaftar.", "Gagal Login", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Terjadi error saat login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Terjadi error saat login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
