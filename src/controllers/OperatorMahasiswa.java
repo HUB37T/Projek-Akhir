@@ -1,11 +1,14 @@
 package controllers;
 
+import models.Mahasiswa;
+
 import java.io.*;
 import java.nio.file.*;
 
 public class OperatorMahasiswa {
     File mahasiswaFile = new File("./data/dataMahasiswa.txt");
     public static String nimLog, namaLog;
+    Mahasiswa mahasiswa;
 
     public boolean cekMahasiswa(String nim, String nama, String password, String prodi) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(mahasiswaFile))) {
@@ -38,8 +41,7 @@ public class OperatorMahasiswa {
         nimLog = nim;
         namaLog = nama;
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(mahasiswaFile, true))) {
-            bw.write(nim + ";" + nama + ";" + password + ";" + prodi);
-            bw.newLine();
+            mahasiswa = new Mahasiswa(nim,nama, password, prodi);
         }
     }
 
