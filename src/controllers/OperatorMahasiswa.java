@@ -14,7 +14,7 @@ public class OperatorMahasiswa {
         try (BufferedReader br = new BufferedReader(new FileReader(mahasiswaFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";", -1); // Gunakan -1 untuk handle baris kosong
+                String[] parts = line.split(";", -1);
                 if (parts.length == 4 && parts[0].equals(nim) && parts[1].equals(nama) && parts[2].equals(password) && parts[3].equals(prodi)) {
                     nimLog = nim;
                     namaLog = nama;
@@ -40,9 +40,7 @@ public class OperatorMahasiswa {
 
         nimLog = nim;
         namaLog = nama;
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(mahasiswaFile, true))) {
-            mahasiswa = new Mahasiswa(nim,nama, password, prodi);
-        }
+        mahasiswa = new Mahasiswa(nim,nama, password, prodi);
     }
 
     public String[] getMahasiswaData(String nim) throws IOException {
