@@ -1,4 +1,4 @@
-B001;Laskar Pelangi;Andrea Hirata;8
+B001;Laskar Pelangi;Andrea Hirata;7
 B002;Bumi Manusia;Pramoedya Ananta Toer;5
 B003;Good Omens;Terry Pratchett, Neil Gaiman;7
 B004;Negeri 5 Menara;Ahmad Fuadi;7
@@ -7,7 +7,7 @@ B006;Filosofi Kopi;Dee Lestari;9
 B007;The Talisman;Stephen King, Peter Straub;5
 B008;Gadis Kretek;Ratih Kumala;5
 B009;Sapiens: Riwayat Singkat Umat Manusia;Yuval Noah Harari;10
-B010;Atomic Habits;James Clear;12
+B010;Atomic Habits;James Clear;11
 B011;The Psychology of Money;Morgan Housel;11
 B012;Sebuah Seni untuk Bersikap Bodo Amat;Mark Manson;15
 B013;Freakonomics;Steven D. Levitt, Stephen J. Dubner;9

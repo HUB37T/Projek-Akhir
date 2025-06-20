@@ -1,0 +1,4 @@
+245150207111050;B001;Laskar Pelangi;2025-06-18
+245150207111050;B010;Atomic Habits;2025-06-18
+245150207111046;B016;Harry Potter and the Sorcerer's Stone;2025-06-19
+245150207111046;B015;Nudge: Improving Decisions About Health, Wealth, and Happiness;2025-06-19
