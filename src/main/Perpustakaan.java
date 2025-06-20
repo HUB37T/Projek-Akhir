@@ -165,11 +165,13 @@ public class Perpustakaan {
                 // Cek apakah NIM dan Kode Buku cocok, jika ya, jangan tulis baris ini (efeknya menghapus)
                 if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku) && !bukuDipinjamDitemukan) {
                     bukuDipinjamDitemukan = true;
+
                     continue;
                 }
                 writer.write(currentLine);
                 writer.newLine();
             }
+            writer.close();
         }
 
         if (!bukuDipinjamDitemukan) {

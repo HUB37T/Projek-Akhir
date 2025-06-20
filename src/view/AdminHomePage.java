@@ -4,7 +4,9 @@ import util.RoundedButton;
 
 import java.io.*;
 import java.awt.*;
+import java.text.NumberFormat;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import javax.swing.*;
 import java.util.List;
@@ -21,7 +23,7 @@ public class AdminHomePage extends JFrame {
 
     private JTable tableBuku;
     private JTable tableTransaksi;
-    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari;
+    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari, fieldKode;
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlah;
     private int pengarangKe;
@@ -207,15 +209,20 @@ public class AdminHomePage extends JFrame {
 
         tfCari = createStyledTextField();
         tfCari.setPreferredSize(new Dimension(200, 35));
+        fieldKode = createStyledTextField();
+        fieldKode.setPreferredSize(new Dimension(200, 35));
         RoundedButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
         RoundedButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
         RoundedButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton kembali = createStyledButton("Kembali", "assets/icons/search_icon.png");
 
         topPanel.add(createStyledLabel("Cari NIM:"));
         topPanel.add(tfCari);
         topPanel.add(btnCari);
         topPanel.add(btnSort);
         topPanel.add(refreshButton);
+        topPanel.add(fieldKode);
+        topPanel.add(kembali);
 
         String[] columnNames = {"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"};
         modelTransaksi = new DefaultTableModel(columnNames, 0) {
@@ -256,6 +263,42 @@ public class AdminHomePage extends JFrame {
             List<RowSorter.SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
             sorterTransaksi.setSortKeys(sortKeys);
+        });
+
+        kembali.addActionListener(e -> {
+            try {
+                String nim = tfCari.getText().trim();
+                String kode = fieldKode.getText().trim();
+                BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"));
+                String line;
+                while((line = br.readLine()) != null) {
+                    String[] parts = line.split(";", -1);
+                    if(parts[0].equals(nim) && parts[1].equals(kode)) {
+                        LocalDate tanggalPinjam = LocalDate.parse(parts[3]);
+                        LocalDate tanggalKembali = LocalDate.now();
+                        long durasiPinjam = ChronoUnit.DAYS.between(tanggalPinjam, tanggalKembali);
+                        if (durasiPinjam <= 7) {
+                            String pesan = String.format("Pengembalian Tepat Waktu!\n\nDurasi Peminjaman: %d hari.\n\nLanjutkan proses pengembalian?", durasiPinjam);
+                            int konfirmasi = JOptionPane.showConfirmDialog(this, pesan, "Konfirmasi Pengembalian", JOptionPane.YES_NO_OPTION);
+                        } else {
+                            long hariTerlambat = durasiPinjam - 7;
+                            long denda = hariTerlambat * 1000;
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                            String pesan = String.format("Anda Terlambat Mengembalikan Buku!\n\nTotal Denda: %s", formatRupiah.format(denda));
+                            String[] options = {"Lanjutkan Pembayaran", "Batal"};
+                            int pilihan = JOptionPane.showOptionDialog(this, pesan, "Pemberitahuan Denda",
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                        }
+                        perpustakaan.kembalikanBuku(nim, kode);
+                        perpustakaan.tambahStokBuku(kode);
+                        tampilkanTabelPinjam();
+                    }
+                }
+                br.close();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+
+            }
         });
 
         return panelTransaksi;
