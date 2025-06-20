@@ -7,8 +7,8 @@ import java.util.*;
 import java.nio.file.*;
 
 public class Perpustakaan {
-    ArrayList<Buku> listBuku;
-    HashMap<String, String> daftarPinjam;
+    ArrayList<Buku> listBuku; //ini sebenarnya ga kepake
+    HashMap<String, String> daftarPinjam; //ini juga awkwk
 
     private final Path fileBuku = Paths.get("data/dataBuku.txt");
     private final Path filePinjam = Paths.get("data/dataPinjam.txt");
