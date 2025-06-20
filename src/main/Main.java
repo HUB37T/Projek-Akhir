@@ -74,6 +74,7 @@ public class Main extends JFrame {
         adminButton.setToolTipText("Masuk sebagai pengelola sistem perpustakaan");
 
         mahasiswaButton = new RoundedButton("Mahasiswa");
+        mahasiswaButton.setToolTipText("Masuk sebagai mahasiswa");
         styleMainButton(mahasiswaButton);
 
         exitButton = new JButton("Exit");
