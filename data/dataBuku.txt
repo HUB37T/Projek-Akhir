@@ -1,4 +1,4 @@
-B001;Laskar Pelangi;Andrea Hirata;7
+B001;Laskar Pelangi;Andrea Hirata;8
 B002;Bumi Manusia;Pramoedya Ananta Toer;5
 B003;Good Omens;Terry Pratchett, Neil Gaiman;7
 B004;Negeri 5 Menara;Ahmad Fuadi;7
@@ -18,7 +18,7 @@ B017;The Lord of the Rings: The Fellowship of the Ring;J.R.R. Tolkien;6
 B018;Will Grayson, Will Grayson;John Green, David Levithan;10
 B019;1984;George Orwell;5
 B020;Critical Eleven;Ika Natassa, Pritagita Arianegara;11
-B021;Laut Bercerita;Leila S. Chudori;7
+B021;Laut Bercerita;Leila S. Chudori;8
 B022;Hujan;Tere Liye;9
 B023;Pulang;Tere Liye;6
 B024;The Guernsey Literary and Potato Peel Pie Society;Mary Ann Shaffer, Annie Barrows;6

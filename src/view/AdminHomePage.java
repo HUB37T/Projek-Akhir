@@ -5,6 +5,7 @@ import util.RoundedButton;
 import java.io.*;
 import java.awt.*;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import javax.swing.*;
 import java.util.List;
@@ -21,7 +22,7 @@ public class AdminHomePage extends JFrame {
 
     private JTable tableBuku;
     private JTable tableTransaksi;
-    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari;
+    private JTextField tfKode, tfJudul, tfPengarang, tfJumlah, tfCari, fieldKode;
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlah;
     private int pengarangKe;
@@ -207,15 +208,21 @@ public class AdminHomePage extends JFrame {
 
         tfCari = createStyledTextField();
         tfCari.setPreferredSize(new Dimension(200, 35));
+        fieldKode = createStyledTextField();
+        fieldKode.setPreferredSize(new Dimension(200, 35));
         RoundedButton btnCari = createStyledButton("Cari", "assets/icons/search_icon.png");
         RoundedButton btnSort = createStyledButton("Sort by Day", "assets/icons/sort_icon.png");
         RoundedButton refreshButton = createStyledButton("Refresh", "assets/icons/refresh_icon.png");
+        RoundedButton kembalikan = createStyledButton("Kembalikan", "assets/icons/search_icon.png");
 
         topPanel.add(createStyledLabel("Cari NIM:"));
         topPanel.add(tfCari);
         topPanel.add(btnCari);
         topPanel.add(btnSort);
         topPanel.add(refreshButton);
+        topPanel.add(fieldKode);
+        topPanel.add(kembalikan);
+
 
         String[] columnNames = {"NIM", "Kode Buku", "Judul", "Tanggal Pinjam"};
         modelTransaksi = new DefaultTableModel(columnNames, 0) {
@@ -257,9 +264,47 @@ public class AdminHomePage extends JFrame {
             sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
             sorterTransaksi.setSortKeys(sortKeys);
         });
+        kembalikan.addActionListener(e -> {
+            String nim = tfCari.getText().trim();
+            String kode = fieldKode.getText().trim();
 
+            try{
+                String hasil = findPinjamanRecord(nim, kode);
+
+                    String[] data = hasil.split(";", -1);
+                    if(data[0].equals(nim) && data[1].equals(kode)){
+                        LocalDate tanggalPinjam = LocalDate.parse(data[3]);
+                        LocalDate tanggalKembali = LocalDate.now();
+                        long durasiPinjam = ChronoUnit.DAYS.between(tanggalPinjam, tanggalKembali);
+                        if(durasiPinjam > 7 ){
+                            long harga = (durasiPinjam - 7) * 1000;
+                            JOptionPane.showMessageDialog(this, "Total denda "+ harga);
+                        }else{
+                            JOptionPane.showMessageDialog(this, "Buku berhasil dikembalikan!");
+                        }
+                        perpustakaan.kembalikanBuku(nim, kode);
+                        perpustakaan.tambahStokBuku(kode);
+                    }
+
+            }catch (Exception ex){
+                JOptionPane.showMessageDialog(this  , ex);
+            }
+        });
         return panelTransaksi;
     }
+    private String findPinjamanRecord(String nim, String kodeBuku) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/dataPinjam.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length > 1 && parts[0].equals(nim) && parts[1].equals(kodeBuku)) {
+                    return line;
+                }
+            }
+        }
+        return null;
+    }
+
 
 
     // --- Helper Methods untuk Styling & Fungsionalitas Asli ---
