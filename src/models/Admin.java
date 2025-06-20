@@ -18,7 +18,7 @@ public class Admin {
             StringBuilder sb = new StringBuilder();
             sb.append(email).append(";")
                     .append(nama).append(";")
-                    .append(password);
+                    .append(password).append("\n");
             String hasil = sb.toString();
             if (!hasil.isBlank()) {
                 bw.write(hasil);

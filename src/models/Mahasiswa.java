@@ -22,7 +22,7 @@ public class Mahasiswa {
             sb.append(nim).append(";")
                     .append(nama).append(";")
                     .append(prodi).append(";")
-                    .append(passsword);
+                    .append(passsword).append("\n");
             String hasil = sb.toString();
             if (!hasil.isBlank()) {
                 bw.write(hasil);
