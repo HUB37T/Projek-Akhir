@@ -1,1 +1,2 @@
-123;Hubert;123;tif
+245150207111050;Orie;123;Teknik Informatika
+245150207111049;Hubert;321;Teknik Informatika

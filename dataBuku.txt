@@ -1,3 +1,1 @@
-1;a;a;1
-2;b;b;0
-3;c;c;0
+B001;Sistem Operasi;Kasyful Amron, Reza;3

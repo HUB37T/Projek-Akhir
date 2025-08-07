@@ -1,7 +1,4 @@
-
-
 import java.time.*;
-import java.util.*;
 public class Transaksi {
     private String nim;
     private String kodeBuku;
