@@ -1,6 +1,4 @@
-
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -24,7 +22,7 @@ public class AdminHomePage extends JFrame{
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlah;
     private int pengarangKe = 0;
-    private TableRowSorter<TableModel> sorterTransaksi;
+    private TableRowSorter<TableModel> sorterTransaksi; // Cukup satu sorter untuk transaksi
     public AdminHomePage() {
         setTitle("Halaman Utama Admin");
         setSize(800, 600);
@@ -109,8 +107,13 @@ public class AdminHomePage extends JFrame{
         };
         tableTransaksi = new JTable(modelTransaksi);
 
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(modelTransaksi);
-        tableTransaksi.setRowSorter(sorter);
+        // PINDAHKAN & UBAH: Inisialisasi sorterTransaksi di sini, hanya sekali.
+        sorterTransaksi = new TableRowSorter<>(modelTransaksi);
+        tableTransaksi.setRowSorter(sorterTransaksi);
+
+        // HAPUS: Baris ini tidak diperlukan lagi karena duplikat.
+        // TableRowSorter<TableModel> sorter = new TableRowSorter<>(modelTransaksi);
+        // tableTransaksi.setRowSorter(sorter);
 
         panelTransaksi.add(topPanel, BorderLayout.NORTH);
         panelTransaksi.add(new JScrollPane(tableTransaksi), BorderLayout.CENTER);
@@ -139,8 +142,11 @@ public class AdminHomePage extends JFrame{
         btnDelete.addActionListener(e -> hapusBuku());
         refresh.addActionListener(e -> tampilkanTabelBuku());
         refreshButton.addActionListener(e -> tampilkanTabelPinjam());
-        sorterTransaksi = new TableRowSorter<>(modelTransaksi);
-        tableTransaksi.setRowSorter(sorterTransaksi);
+
+        // HAPUS: Inisialisasi kedua untuk sorterTransaksi di sini tidak diperlukan.
+        // sorterTransaksi = new TableRowSorter<>(modelTransaksi);
+        // tableTransaksi.setRowSorter(sorterTransaksi);
+
         btnCari.addActionListener(e -> {
             String teksPencarian = tfCari.getText().trim();
 
@@ -151,10 +157,11 @@ public class AdminHomePage extends JFrame{
             }
         });
 
+        // UBAH: Pastikan listener ini menggunakan field `sorterTransaksi`, bukan variabel lokal `sorter`.
         btnSort.addActionListener(e -> {
             List<RowSorter.SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
-            sorter.setSortKeys(sortKeys);
+            sorterTransaksi.setSortKeys(sortKeys); // Menggunakan sorterTransaksi yang benar
         });
 
 
@@ -350,4 +357,3 @@ public class AdminHomePage extends JFrame{
         SwingUtilities.invokeLater(AdminHomePage::new);
     }
 }
-
